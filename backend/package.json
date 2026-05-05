@@ -9,7 +9,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@prisma/client": "^6.5.0",
+    "@prisma/client": "^6.19.3",
     "cors": "^2.8.5",
     "express": "^4.21.0"
   },
