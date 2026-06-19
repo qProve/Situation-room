@@ -1,25 +1,25 @@
 {
-  "name": "situation-room",
-  "version": "1.0.0",
-  "description": "Web application for displaying real time data on an interactive map.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write \"**/*.{js,ts,vue,json,html,css}\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/qProve-P/Situation-room.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/qProve-P/Situation-room/issues"
-  },
-  "homepage": "https://github.com/qProve-P/Situation-room#readme",
-  "devDependencies": {
-    "prettier": "^3.8.3"
-  }
+    "name": "situation-room",
+    "version": "1.0.0",
+    "description": "Web application for displaying real time data on an interactive map.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier --write \"**/*.{js,ts,vue,json,html,css}\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/qProve-P/Situation-room.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/qProve-P/Situation-room/issues"
+    },
+    "homepage": "https://github.com/qProve-P/Situation-room#readme",
+    "devDependencies": {
+        "prettier": "^3.8.3"
+    }
 }

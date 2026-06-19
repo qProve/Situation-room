@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import axios from 'axios';
-import {writeFileSync} from "fs";
+import eventsRouter from './routes/events';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -11,28 +10,24 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get('/api/events', async (_req: Request, res: Response) => {
-  let resp = await axios.get('https://eonet.gsfc.nasa.gov/api/v3/events');
-  
-  console.log(resp.data);
-});
+app.use('/api/events', eventsRouter);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
-  res.status(404).json({ error: 'Endpoint not found' });
+    res.status(404).json({ error: 'Endpoint not found' });
 });
 
 // Global error handler
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Server error:', err.message);
-  res.status(500).json({ error: 'Internal server error' });
+    console.error('Server error:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });

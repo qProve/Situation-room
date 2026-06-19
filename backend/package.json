@@ -1,28 +1,29 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "start": "tsx src/index.ts",
-    "dev": "tsx watch src/index.ts",
-    "build": "tsc"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "axios": "^1.16.1",
-    "cors": "^2.8.5",
-    "express": "^4.21.0"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^25.6.0",
-    "prisma": "^6.19.3",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.js"
-  }
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "tsx src/index.ts",
+        "dev": "tsx watch src/index.ts",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.19.3",
+        "axios": "^1.16.1",
+        "axios-retry": "^4.5.0",
+        "cors": "^2.8.5",
+        "express": "^4.21.0"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "@types/node": "^25.6.0",
+        "prisma": "^6.19.3",
+        "tsx": "^4.21.0",
+        "typescript": "^6.0.3"
+    },
+    "prisma": {
+        "seed": "tsx prisma/seed.js"
+    }
 }
