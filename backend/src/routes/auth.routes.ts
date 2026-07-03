@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import { prisma } from '../db';
 
 dotenv.config();
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in .env');
+}
 
 const router = Router();
 
@@ -27,7 +30,7 @@ router.post('/register', async (_req: Request, res: Response) => {
             },
         });
 
-        res.status(201).json({ message: 'User registered successfully' });
+        return res.status(201).json({ message: 'User registered successfully' });
     } catch (e: unknown) {
         if (e instanceof Error) {
             console.log('Error: ', e.message);
@@ -42,7 +45,7 @@ router.post('/register', async (_req: Request, res: Response) => {
             return res.status(500).json({ error: 'Internal server error: ' + e.message });
         }
 
-        res.status(500).json({ error: 'Unknown error occurred' });
+        return res.status(500).json({ error: 'Unknown error occurred' });
     }
 });
 
@@ -70,7 +73,7 @@ router.post('/login', async (_req: Request, res: Response) => {
         }
 
         const token = jwtSign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
+        return res.json({ token });
     } catch (e: unknown) {
         if (e instanceof Error) {
             console.log('Error: ', e.message);
@@ -78,7 +81,7 @@ router.post('/login', async (_req: Request, res: Response) => {
             return res.status(500).json({ error: 'Internal server error: ' + e.message });
         }
 
-        res.status(500).json({ error: 'Unknown error occurred' });
+        return res.status(500).json({ error: 'Unknown error occurred' });
     }
 });
 

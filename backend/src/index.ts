@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import eventsRouter from './routes/events';
-import authRouter from './routes/auth';
+import eventsRouter from './routes/events.routes';
+import authRouter from './routes/auth.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3001;

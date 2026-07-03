@@ -1,0 +1,25 @@
+import express, { Request, Response, NextFunction } from 'express';
+import {verify as jwtVerify} from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in .env');
+}
+
+const auth = (_req: Request, res: Response, _next: NextFunction) => {
+    const authHeader = _req.header('Authorization');
+    if(!authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({error: 'Access denied. No token provided'});
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+        const decode = jwtVerify(token, process.env.JWT_SECRET);
+        _req.user = decode;
+        _next();
+    }catch(e: unknown) {
+        return res.status(400).json({message: 'Invalid token'})
+    }
+}
