@@ -18,16 +18,16 @@ router.get('/nasa', async (_req: Request, res: Response) => {
         const response = await axios.get(NASA_EONET_EVENTS_URL);
 
         console.log(response.data);
-        return res.json(response.data);
+        res.json(response.data);
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             const status = e.response?.status || 500;
             const message = e.response?.data?.message || 'Unknown error from NASA servers';
 
-            return res.status(status).json({ error: message });
+            res.status(status).json({ error: message });
         } else {
             console.log('Error while downloading data: ', e);
-            return res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 });
@@ -37,16 +37,16 @@ router.get('/usgs', async (_req: Request, res: Response) => {
         const response = await axios.get(USGS_EARTHQUAKE_URL);
 
         console.log(response.data);
-        return res.json(response.data);
+        res.json(response.data);
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
             const status = e.response?.status || 500;
             const message = e.response?.data.message || 'Unknown error from USGS servers';
 
-            return res.status(status).json({ error: message });
+            res.status(status).json({ error: message });
         } else {
             console.log('Error while downloading data: ', e);
-            return res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: 'Internal server error' });
         }
     }
 });

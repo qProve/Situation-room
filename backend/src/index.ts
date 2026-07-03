@@ -15,7 +15,7 @@ app.use('/api/events', eventsRouter);
 app.use('/api/auth', authRouter);
 
 app.get('/', (_req: Request, res: Response) => {
-    res.send("Situation Room");
+    res.send('Situation Room');
 });
 
 // Health check
