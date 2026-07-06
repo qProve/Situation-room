@@ -1,7 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+
 import eventsRouter from './routes/events.routes';
 import authRouter from './routes/auth.routes';
+import userRouter from './routes/user.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +15,7 @@ app.use(express.json());
 // Routes
 app.use('/api/events', eventsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 
 app.get('/', (_req: Request, res: Response) => {
     res.send('Situation Room');
