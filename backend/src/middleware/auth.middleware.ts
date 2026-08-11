@@ -25,5 +25,3 @@ export const auth = (_req: Request, res: Response, _next: NextFunction) => {
         return res.status(401).json({ error: 'Invalid token' });
     }
 };
-
-

@@ -21,10 +21,14 @@ router.post('/register', authRateLimit, async (_req: Request, res: Response) => 
     }
 
     if (typeof username !== 'string' || username.length > 63 || username.length < 3) {
-        return res.status(400).json({ error: 'Username has to be min 3 and max 63 characters long' });
+        return res
+            .status(400)
+            .json({ error: 'Username has to be min 3 and max 63 characters long' });
     }
     if (typeof password !== 'string' || password.length > 255 || password.length < 4) {
-        return res.status(400).json({ error: 'Password has to be min 4 and max 255 characters long' });
+        return res
+            .status(400)
+            .json({ error: 'Password has to be min 4 and max 255 characters long' });
     }
 
     try {
@@ -41,7 +45,6 @@ router.post('/register', authRateLimit, async (_req: Request, res: Response) => 
         return res.status(201).json({ message: 'User registered successfully' });
     } catch (e: unknown) {
         if (e instanceof Error) {
-
             if (e.message.includes('Unique constraint failed')) {
                 return res.status(409).json({ error: 'Username already exists' });
             }
@@ -84,7 +87,6 @@ router.post('/login', authRateLimit, async (_req: Request, res: Response) => {
         return res.json({ token });
     } catch (e: unknown) {
         if (e instanceof Error) {
-
             console.error('Login error: ' + e.message);
             return res.status(500).json({ error: 'Internal server error' });
         }
