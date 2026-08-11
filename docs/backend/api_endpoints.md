@@ -10,12 +10,16 @@ All endpoints start with **/api**.
       - password* - string
     - On success:
       - status 201
+    - Middleware:
+      - authRateLimit
 2) **/login**
     - Body:
       - username* - string
       - password* - string
     - On success:
       - JWT token
+    - Middleware:
+      - authRateLimit
 
 ### User Group (/user):
 

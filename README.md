@@ -6,4 +6,4 @@ Web application for displaying real time data on an interactive map.
 - **Backend**: ExpressJS
 - **Frontend**: Vue.js
 - **Database**: PostgreSQL (with Prisma)
-- **Map**: MapLibre GL JS
+- **Map**: MapLibre GL JS - basemaps.cartocdn.com

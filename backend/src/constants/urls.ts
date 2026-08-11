@@ -1,5 +1,5 @@
 // NASA EONET
-export const NASA_EONET_EVENTS_URL = 'https://eonet.gsfc.nasa.gov/api/v3/events';
+export const NASA_EONET_EVENTS_URL = 'https://eonet.gsfc.nasa.gov/api/v3/events/geojson';
 
 // USGS
 export const USGS_EARTHQUAKE_URL =
