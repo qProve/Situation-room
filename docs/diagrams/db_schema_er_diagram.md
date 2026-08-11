@@ -8,4 +8,12 @@ erDiagram
         string username UK
         string password
     }
+
+    GeoPoint {
+        int id PK
+        PointType point_type
+        float longitude
+        float latitude
+        json metadata
+    }
 ```
