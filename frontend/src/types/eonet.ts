@@ -1,3 +1,5 @@
+import type { Feature, Point, Polygon } from 'geojson';
+
 export interface EonetCategory {
     id: string;
     title: string;
@@ -5,7 +7,7 @@ export interface EonetCategory {
 
 export interface EonetSource {
     id: string;
-    title: string;
+    url: string;
 }
 
 export interface EonetProperties {
@@ -21,16 +23,7 @@ export interface EonetProperties {
     sources: EonetSource[];
 }
 
-export interface EonetGeometry {
-    type: 'Point' | 'Polygon';
-    coordinates: number[] | number[][][];
-}
-
-export interface EonetFeature {
-    type: 'Feature';
-    properties: EonetProperties;
-    geometry: EonetGeometry;
-}
+export type EonetFeature = Feature<Point | Polygon, EonetProperties>;
 
 export interface EonetFeatureCollection {
     type: 'FeatureCollection';
