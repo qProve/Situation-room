@@ -16,8 +16,6 @@ axiosRetry(axios, {
 router.get('/nasa', async (_req: Request, res: Response) => {
     try {
         const response = await axios.get(NASA_EONET_EVENTS_URL);
-
-        console.log(response.data);
         res.json(response.data);
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
@@ -35,8 +33,6 @@ router.get('/nasa', async (_req: Request, res: Response) => {
 router.get('/usgs', async (_req: Request, res: Response) => {
     try {
         const response = await axios.get(USGS_EARTHQUAKE_URL);
-
-        console.log(response.data);
         res.json(response.data);
     } catch (e: unknown) {
         if (e instanceof AxiosError) {
