@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { createApp, onMounted, onUnmounted, ref, watch } from 'vue';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import type { Feature, FeatureCollection } from 'geojson';
+import type { Feature, FeatureCollection, Point } from 'geojson';
 import { buildColorExpression } from '@/utils/categoryColors';
+import MoleculeMapPopup from '../molecules/MoleculeMapPopup.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -21,6 +22,7 @@ const props = withDefaults(
 const mapContainer = ref<HTMLElement | null>(null);
 let map: maplibregl.Map | null = null;
 const mapReady = ref(false);
+let popup: maplibregl.Popup | null = null;
 
 onMounted(() => {
     if (mapContainer.value) {
@@ -40,7 +42,14 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    popup?.remove();
     map?.remove();
+});
+
+watch([() => props.features, mapReady], ([features, ready]) => {
+    if (!ready || !map) return;
+
+    updateSource(features as Feature[]);
 });
 
 const updateSource = (features: Feature[]) => {
@@ -72,14 +81,41 @@ const updateSource = (features: Feature[]) => {
                 'circle-opacity': 0.8,
             },
         });
+
+        addClickHandler();
     }
 };
 
-watch([() => props.features, mapReady], ([features, ready]) => {
-    if (!ready || !map) return;
+const createPopupContent = (properties: Record<string, unknown>) => {
+    const container = document.createElement('div');
 
-    updateSource(features as Feature[]);
-});
+    createApp(MoleculeMapPopup, { properties }).mount(container);
+
+    return container;
+}
+
+const addClickHandler = () => {
+    map?.on('click', 'features-circles', (e) => {
+        const feature = e.features?.[0];
+        if (!feature) return;
+
+        const coordinates = (feature.geometry as Point).coordinates as [number, number];
+        const properties = feature.properties;
+
+        popup?.remove();
+        popup = new maplibregl.Popup()
+            .setLngLat(coordinates)
+            .setDOMContent(createPopupContent(properties))
+            .addTo(map!);
+    });
+
+    map?.on('mouseover', 'features-circles', () => {
+        if (map) map.getCanvas().style.cursor = 'pointer';
+    });
+    map?.on('mouseleave', 'features-circles', () => {
+        if (map) map.getCanvas().style.cursor = '';
+    });
+}
 </script>
 
 <template>
