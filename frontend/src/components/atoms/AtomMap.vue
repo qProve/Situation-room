@@ -2,7 +2,7 @@
 import { createApp, onMounted, onUnmounted, ref, watch } from 'vue';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import type { Feature, FeatureCollection, Point } from 'geojson';
+import type { Feature, Point } from 'geojson';
 import { buildColorExpression } from '@/utils/categoryColors';
 import MoleculeMapPopup from '../molecules/MoleculeMapPopup.vue';
 
@@ -10,7 +10,7 @@ const props = withDefaults(
     defineProps<{
         center?: maplibregl.LngLatLike;
         zoom?: number;
-        features?: Feature[];
+        features: Feature[];
     }>(),
     {
         center: () => [0, 0],
@@ -107,6 +107,8 @@ const addClickHandler = () => {
             .setLngLat(coordinates)
             .setDOMContent(createPopupContent(properties))
             .addTo(map!);
+
+        console.log(feature);
     });
 
     map?.on('mouseover', 'features-circles', () => {
@@ -119,5 +121,5 @@ const addClickHandler = () => {
 </script>
 
 <template>
-    <div ref="mapContainer" class="h-screen w-screen bg-black"></div>
+    <div ref="mapContainer" class="h-full w-full bg-black"></div>
 </template>

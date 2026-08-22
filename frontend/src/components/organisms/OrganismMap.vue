@@ -28,7 +28,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="relative h-screen w-screen">
+    <div class="relative h-full w-full">
         <AtomMap :features="features" />
 
         <Transition name="fade">
