@@ -1,6 +1,5 @@
 import './assets/main.css';
-import 'gridstack/dist/gridstack.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css'
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';

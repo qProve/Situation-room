@@ -2,7 +2,7 @@
 import AtomButton from '../atoms/AtomButton.vue';
 
 const handleClick = () => {
-    console.log("AAAAAAAAA");
+    return;
 };
 </script>
 

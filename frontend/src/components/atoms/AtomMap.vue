@@ -92,7 +92,7 @@ const createPopupContent = (properties: Record<string, unknown>) => {
     createApp(MoleculeMapPopup, { properties }).mount(container);
 
     return container;
-}
+};
 
 const addClickHandler = () => {
     map?.on('click', 'features-circles', (e) => {
@@ -117,7 +117,7 @@ const addClickHandler = () => {
     map?.on('mouseleave', 'features-circles', () => {
         if (map) map.getCanvas().style.cursor = '';
     });
-}
+};
 </script>
 
 <template>

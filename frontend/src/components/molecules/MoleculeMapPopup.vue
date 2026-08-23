@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-    properties: Record<string, unknown>
+    properties: Record<string, unknown>;
 }>();
 
 const date = new Date(props.properties.date as string);

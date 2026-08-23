@@ -9,6 +9,16 @@ const CATEGORY_COLORS = [
     '#e91e63', // pink
 ];
 
+const colorMap = new Map<string, string>();
+
+export const registerCategories = (categoties: string[]) => {
+    categoties.forEach((cat) => {
+        if (!colorMap.has(cat)) {
+            colorMap.set(cat, CATEGORY_COLORS[colorMap.size % CATEGORY_COLORS.length] ?? '#ffffff');
+        }
+    });
+};
+
 export const buildColorExpression = (categories: string[]): maplibregl.ExpressionSpecification => {
     if (categories.length === 0) {
         return '#ffffff' as unknown as maplibregl.ExpressionSpecification;
@@ -16,9 +26,9 @@ export const buildColorExpression = (categories: string[]): maplibregl.Expressio
 
     const matches: unknown[] = ['match', ['get', 'category']];
 
-    categories.forEach((category, index) => {
-        matches.push(category);
-        matches.push(CATEGORY_COLORS[index % CATEGORY_COLORS.length]);
+    categories.forEach((cat) => {
+        matches.push(cat);
+        matches.push(colorMap.get(cat) ?? '#ffffff');
     });
 
     matches.push('#ffffff');
