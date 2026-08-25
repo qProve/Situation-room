@@ -15,6 +15,7 @@ model User {
   id Int @id @default(autoincrement())
   username String @unique @db.VarChar(63)
   password String @db.VarChar(255)
+  geo_points GeoPoint[]
 }
 
 enum PointType {
@@ -23,6 +24,8 @@ enum PointType {
 }
 model GeoPoint {
   id Int @id @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
   point_type PointType
   longitude Float
   latitude Float

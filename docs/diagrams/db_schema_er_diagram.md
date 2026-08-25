@@ -7,6 +7,7 @@ erDiagram
         int id PK
         string username UK
         string password
+        GeoPoint[] geo_points FK
     }
 
     GeoPoint {
@@ -15,5 +16,6 @@ erDiagram
         float longitude
         float latitude
         json metadata
+        int user_id FK
     }
 ```
