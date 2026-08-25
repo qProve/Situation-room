@@ -1,5 +1,5 @@
 export const ENDPOINTS = {
     events: {
-        nasa: '/events/nasa',
+        eonet: '/events/eonet',
     },
 } as const;

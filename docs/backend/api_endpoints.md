@@ -24,9 +24,12 @@ All endpoints start with **/api**.
 ### User Group (/user):
 
 ### Events Group (/events):
-1) **/nasa**
+1) **/eonet**
     - On success:
       - data - json
 2) **/usgs**
-   - On success:
+    - On success:
+      - data - json
+3) **/opensky**
+    - On success:
       - data - json

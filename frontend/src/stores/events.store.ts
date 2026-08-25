@@ -1,4 +1,4 @@
-import { fetchNasaEvents } from '@/services/events.service';
+import { fetchEonetEvents } from '@/services/events.service';
 import type { EonetFeature } from '@/types/eonet';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
@@ -8,12 +8,12 @@ export const useEventsStore = defineStore('events', () => {
     const isLoading = ref(false);
     const error = ref<string | null>(null);
 
-    const fetchNasaEvents_ = async () => {
+    const fetchEonetEvents_ = async () => {
         isLoading.value = true;
         error.value = null;
 
         try {
-            features.value = await fetchNasaEvents();
+            features.value = await fetchEonetEvents();
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Unknown error';
         } finally {
@@ -21,5 +21,5 @@ export const useEventsStore = defineStore('events', () => {
         }
     };
 
-    return { features, isLoading, error, fetch: fetchNasaEvents_ };
+    return { features, isLoading, error, fetch: fetchEonetEvents_ };
 });
