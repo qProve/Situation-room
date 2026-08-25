@@ -23,6 +23,7 @@ const mapContainer = ref<HTMLElement | null>(null);
 let map: maplibregl.Map | null = null;
 const mapReady = ref(false);
 let popup: maplibregl.Popup | null = null;
+let popupLngLat: [number, number] | null = null;
 
 onMounted(() => {
     if (mapContainer.value) {
@@ -102,13 +103,28 @@ const addClickHandler = () => {
         const coordinates = (feature.geometry as Point).coordinates as [number, number];
         const properties = feature.properties;
 
+        popupLngLat = coordinates;
+
         popup?.remove();
         popup = new maplibregl.Popup()
             .setLngLat(coordinates)
             .setDOMContent(createPopupContent(properties))
             .addTo(map!);
 
+        popup.on('close', () => {
+            popupLngLat = null;
+        });
+
         console.log(feature);
+    });
+
+    map?.on('move', () => {
+        if (!popup || !popupLngLat) return;
+
+        const visible = isPointVisible(popupLngLat);
+        const el = popup.getElement();
+        el.style.opacity = visible ? '1' : '0';
+        el.style.pointerEvents = visible ? 'auto' : 'none';
     });
 
     map?.on('mouseover', 'features-circles', () => {
@@ -117,6 +133,24 @@ const addClickHandler = () => {
     map?.on('mouseleave', 'features-circles', () => {
         if (map) map.getCanvas().style.cursor = '';
     });
+};
+
+const isPointVisible = (coordinates: [number, number]): boolean => {
+    if (!map) return false;
+
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+    const mapCenter = map.getCenter();
+
+    const lat1 = toRad(mapCenter.lat);
+    const lng1 = toRad(mapCenter.lng);
+    const lat2 = toRad(coordinates[1]);
+    const lng2 = toRad(coordinates[0]);
+
+    const dotprod =
+        Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+
+    return dotprod > 0;
 };
 </script>
 

@@ -1,6 +1,6 @@
 const CATEGORY_COLORS = [
-    '#e74c3c', // red
     '#3498db', // blue
+    '#e74c3c', // red
     '#2ecc71', // green
     '#f39c12', // orange
     '#9b59b6', // purple
@@ -34,4 +34,8 @@ export const buildColorExpression = (categories: string[]): maplibregl.Expressio
     matches.push('#ffffff');
 
     return matches as maplibregl.ExpressionSpecification;
+};
+
+export const getCategoryColor = (id: string): string => {
+    return colorMap.get(id) ?? '#ffffff';
 };

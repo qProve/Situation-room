@@ -4,36 +4,38 @@ import AtomButton from '../atoms/AtomButton.vue';
 import AtomToggle from '../atoms/AtomToggle.vue';
 import { useEventsStore } from '@/stores/events.store.ts';
 import AtomCheckbox from '../atoms/AtomCheckbox.vue';
+import { getCategoryColor } from '@/utils/categoryColors.ts';
 
 const eventsStore = useEventsStore();
 
 const isOpen = ref(true);
-const activeOnly = ref(false);
+const activeOnly = ref(true);
 
 const availableCategories = computed(() => {
-    const seen = new Set<string>();
+    const seen = new Map<string, string>();
 
     for (const feature of eventsStore.features) {
         const id = feature.properties.categories[0]?.id;
-        if (id) seen.add(id);
+        const title = feature.properties.categories[0]?.title;
+        if (id) seen.set(id, title as string);
     }
 
     return [...seen];
 });
 
-const selectedCategories = ref<Set<string>>(new Set());
+const selectedCategories = ref<Map<string, string>>(new Map());
 
 watch(
     availableCategories,
     (cats) => {
-        selectedCategories.value = new Set(cats);
+        selectedCategories.value = new Map(cats);
     },
     { immediate: true },
 );
 
 const emit = defineEmits<{
     'update:activeOnly': [value: boolean];
-    'update:selectedCategories': [value: Set<string>];
+    'update:selectedCategories': [value: Map<string, string>];
 }>();
 
 watch(
@@ -47,14 +49,14 @@ watch(
 watch(
     selectedCategories,
     (val) => {
-        emit('update:selectedCategories', new Set(val));
+        emit('update:selectedCategories', new Map(val));
     },
     { immediate: true, deep: true },
 );
 
-const toggleCategory = (id: string, checked: boolean) => {
-    const next = new Set(selectedCategories.value);
-    checked ? next.add(id) : next.delete(id);
+const toggleCategory = (id: string, value: string, checked: boolean) => {
+    const next = new Map(selectedCategories.value);
+    checked ? next.set(id, value) : next.delete(id);
     selectedCategories.value = next;
 };
 </script>
@@ -117,11 +119,14 @@ const toggleCategory = (id: string, checked: boolean) => {
                         <AtomCheckbox
                             v-for="cat in availableCategories"
                             cursor="cursor-pointer"
-                            :key="cat"
-                            :modelValue="selectedCategories.has(cat)"
-                            @update:modelValue="(checked) => toggleCategory(cat, checked)"
+                            :key="cat[0]"
+                            :modelValue="selectedCategories.has(cat[0])"
+                            :color="getCategoryColor(cat[0])"
+                            @update:modelValue="
+                                (checked) => toggleCategory(cat[0], cat[1], checked)
+                            "
                         >
-                            {{ cat }}
+                            {{ cat[1] }}
                         </AtomCheckbox>
                     </div>
                 </div>

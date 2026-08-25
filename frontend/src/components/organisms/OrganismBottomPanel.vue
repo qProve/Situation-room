@@ -7,7 +7,7 @@ const handleClick = () => {
 </script>
 
 <template>
-    <div class="relative px-2 py-1 flex bg-gray-600">
+    <div class="relative px-2 py-1 flex bg-black">
         <AtomButton
             label="Settings"
             size="h-6"
