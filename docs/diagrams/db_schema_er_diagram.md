@@ -18,4 +18,6 @@ erDiagram
         json metadata
         int user_id FK
     }
+
+    User ||--o{ GeoPoint : "has many"
 ```
