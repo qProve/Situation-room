@@ -3,7 +3,6 @@ import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 
 import { NASA_EONET_EVENTS_URL, OPENSKY_URL, USGS_EARTHQUAKE_URL } from '../constants/urls';
-import { error } from 'node:console';
 
 const router = Router();
 
