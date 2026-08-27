@@ -44,8 +44,8 @@ watch(
     () => eventsStore.features,
     (features) => {
         const cats = [...new Set(features.map((f) => f.properties.categories[0]?.id ?? ''))];
-        
-        cats.forEach(cat => {
+
+        cats.forEach((cat) => {
             colorManager.rent(cat);
         });
     },
