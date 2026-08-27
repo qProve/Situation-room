@@ -5,18 +5,18 @@ import { computed, onMounted, watch, ref } from 'vue';
 import AtomMap from '../atoms/AtomMap.vue';
 import AtomSpinner from '../atoms/AtomSpinner.vue';
 import OrganismMapControlPanel from './OrganismMapControlPanel.vue';
-import { registerCategories } from '@/utils/categoryColors.ts';
+import type { CategoryColorReturnValue } from '@/types/categoryColorReturnValue.ts';
+import { colorManager } from '@/managers/categoryColor.manager.ts';
 
 const eventsStore = useEventsStore();
-const activeOnlyFilter = ref(false);
 
+const activeOnlyFilter = ref(false);
 const onActiveOnlyChange = (val: boolean) => {
     activeOnlyFilter.value = val;
 };
 
-const selectedCategories = ref<Set<string>>(new Set());
-
-const onSelectedCategoriesChange = (val: Set<string>) => {
+const selectedCategories = ref<Map<string, string>>(new Map());
+const onSelectedCategoriesChange = (val: Map<string, string>) => {
     selectedCategories.value = val;
 };
 
@@ -44,7 +44,10 @@ watch(
     () => eventsStore.features,
     (features) => {
         const cats = [...new Set(features.map((f) => f.properties.categories[0]?.id ?? ''))];
-        registerCategories(cats);
+        
+        cats.forEach(cat => {
+            colorManager.rent(cat);
+        });
     },
     { immediate: true },
 );

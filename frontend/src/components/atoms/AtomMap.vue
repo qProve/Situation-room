@@ -3,8 +3,8 @@ import { createApp, onMounted, onUnmounted, ref, watch } from 'vue';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Feature, Point } from 'geojson';
-import { buildColorExpression } from '@/utils/categoryColors';
 import MoleculeMapPopup from '../molecules/MoleculeMapPopup.vue';
+import { colorManager } from '@/managers/categoryColor.manager.ts';
 
 const props = withDefaults(
     defineProps<{
@@ -49,14 +49,13 @@ onUnmounted(() => {
 
 watch([() => props.features, mapReady], ([features, ready]) => {
     if (!ready || !map) return;
+    if (!(features as Feature[]).length) return;
 
     updateSource(features as Feature[]);
 });
 
 const updateSource = (features: Feature[]) => {
-    const categories = [...new Set(features.map((f) => f.properties?.category).filter(Boolean))];
-
-    const colorExpression = buildColorExpression(categories);
+    const colorExpression = colorManager.buildExpression();
 
     const source = map?.getSource('features') as maplibregl.GeoJSONSource | undefined;
 

@@ -4,7 +4,7 @@ import AtomButton from '../atoms/AtomButton.vue';
 import AtomToggle from '../atoms/AtomToggle.vue';
 import { useEventsStore } from '@/stores/events.store.ts';
 import AtomCheckbox from '../atoms/AtomCheckbox.vue';
-import { getCategoryColor } from '@/utils/categoryColors.ts';
+import { colorManager } from '@/managers/categoryColor.manager.ts';
 
 const eventsStore = useEventsStore();
 
@@ -121,7 +121,7 @@ const toggleCategory = (id: string, value: string, checked: boolean) => {
                             cursor="cursor-pointer"
                             :key="cat[0]"
                             :modelValue="selectedCategories.has(cat[0])"
-                            :color="getCategoryColor(cat[0])"
+                            :color="colorManager.getColor(cat[0])"
                             @update:modelValue="
                                 (checked) => toggleCategory(cat[0], cat[1], checked)
                             "
