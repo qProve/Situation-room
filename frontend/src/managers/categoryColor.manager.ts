@@ -1,5 +1,3 @@
-import type { CategoryColorReturnValue } from '@/types/categoryColorReturnValue';
-
 const COLORS = [
     '#e74c3c', // red
     '#3498db', // blue

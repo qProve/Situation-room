@@ -5,7 +5,6 @@ import { computed, onMounted, watch, ref } from 'vue';
 import AtomMap from '../atoms/AtomMap.vue';
 import AtomSpinner from '../atoms/AtomSpinner.vue';
 import OrganismMapControlPanel from './OrganismMapControlPanel.vue';
-import type { CategoryColorReturnValue } from '@/types/categoryColorReturnValue.ts';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
 
 const eventsStore = useEventsStore();
