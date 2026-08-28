@@ -2,11 +2,13 @@
 import { computed, ref, watch } from 'vue';
 import AtomButton from '../atoms/AtomButton.vue';
 import AtomToggle from '../atoms/AtomToggle.vue';
-import { useEventsStore } from '@/stores/events.store.ts';
+import { useEonetStore } from '@/stores/eonet.store.ts';
 import AtomCheckbox from '../atoms/AtomCheckbox.vue';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
+import { useUsgsStore } from '@/stores/usgs.store.ts';
 
-const eventsStore = useEventsStore();
+const eonetStore = useEonetStore();
+const usgsStore = useUsgsStore();
 
 const isOpen = ref(true);
 const activeOnly = ref(true);
@@ -14,10 +16,10 @@ const activeOnly = ref(true);
 const availableCategories = computed(() => {
     const seen = new Map<string, string>();
 
-    for (const feature of eventsStore.features) {
-        const id = feature.properties.categories[0]?.id;
-        const title = feature.properties.categories[0]?.title;
-        if (id) seen.set(id, title as string);
+    for (const feature of usgsStore.features) {
+        const id = feature.properties.type;
+        const formatedTitle = id[0]?.toUpperCase() + id.slice(1).toLowerCase();
+        if (id) seen.set(id, formatedTitle);
     }
 
     return [...seen];

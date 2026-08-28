@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { useEventsStore } from '@/stores/events.store';
+import { useEonetStore } from '@/stores/eonet.store.ts';
 import type { Feature, Point, Polygon } from 'geojson';
 import { computed, onMounted, watch, ref } from 'vue';
 import AtomMap from '../atoms/AtomMap.vue';
 import AtomSpinner from '../atoms/AtomSpinner.vue';
 import OrganismMapControlPanel from './OrganismMapControlPanel.vue';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
+import { useUsgsStore } from '@/stores/usgs.store.ts';
 
-const eventsStore = useEventsStore();
+const eonetStore = useEonetStore();
+const usgsStore = useUsgsStore();
+
+onMounted(() => {
+    eonetStore.fetch();
+    usgsStore.fetch();
+});
 
 const activeOnlyFilter = ref(false);
 const onActiveOnlyChange = (val: boolean) => {
@@ -20,27 +27,37 @@ const onSelectedCategoriesChange = (val: Map<string, string>) => {
 };
 
 const normalizedFeatures = computed((): Feature<Point | Polygon>[] => {
-    let features = activeOnlyFilter.value
-        ? eventsStore.features.filter((f) => f.properties.closed === null)
-        : eventsStore.features;
+    const eonet = (
+        activeOnlyFilter.value
+            ? eonetStore.features.filter((f) => f.properties.closed === null)
+            : eonetStore.features
+    )
+        .filter(
+            (f) =>
+                selectedCategories.value.size === 0 ||
+                selectedCategories.value.has(f.properties.categories[0]?.id ?? ''),
+        )
+        .map((f) => ({
+            ...f,
+            properties: {
+                ...f.properties,
+                category: f.properties.categories[0]?.id ?? 'unknown',
+            },
+        }));
 
-    if (selectedCategories.value.size > 0) {
-        features = features.filter((f) =>
-            selectedCategories.value.has(f.properties.categories[0]?.id ?? ''),
-        );
-    }
-
-    return features.map((f) => ({
+    const usgs = usgsStore.features.map((f) => ({
         ...f,
         properties: {
             ...f.properties,
-            category: f.properties.categories[0]?.id ?? 'unknown',
+            category: f.properties.type,
         },
     }));
+
+    return [...eonet, ...usgs];
 });
 
 watch(
-    () => eventsStore.features,
+    () => eonetStore.features,
     (features) => {
         const cats = [...new Set(features.map((f) => f.properties.categories[0]?.id ?? ''))];
 
@@ -50,10 +67,6 @@ watch(
     },
     { immediate: true },
 );
-
-onMounted(() => {
-    eventsStore.fetch();
-});
 </script>
 
 <template>
@@ -67,7 +80,7 @@ onMounted(() => {
 
         <Transition name="fade">
             <div
-                v-if="eventsStore.isLoading"
+                v-if="eonetStore.isLoading"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 z-10"
             >
                 <AtomSpinner />
@@ -76,10 +89,10 @@ onMounted(() => {
 
         <Transition name="fade">
             <div
-                v-if="eventsStore.error"
+                v-if="eonetStore.error"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 z-10"
             >
-                <span class="text-red-400 text-lg">{{ eventsStore.error }}</span>
+                <span class="text-red-400 text-lg">{{ eonetStore.error }}</span>
             </div>
         </Transition>
     </div>
