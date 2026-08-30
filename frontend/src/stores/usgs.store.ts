@@ -1,12 +1,45 @@
 import { fetchUsgsEvents } from '@/services/events.service';
-import type { UsgsFeature } from '@/types/usgs';
+import type { UsgsFeature } from '@/types/usgs.type';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { colorManager } from '@/managers/categoryColor.manager';
 
 export const useUsgsStore = defineStore('usgs', () => {
     const features = ref<UsgsFeature[]>([]);
     const isLoading = ref(false);
     const error = ref<string | null>(null);
+
+    const selectedCategories = ref<Map<string, string>>(new Map());
+
+    const availableCategories = computed(() => {
+        const seen = new Map<string, string>();
+
+        for (const feature of features.value) {
+            const id = feature.properties.type;
+            const formatedTitle = id[0]?.toUpperCase() + id.slice(1).toLowerCase();
+            if (id) seen.set(id, formatedTitle);
+        }
+
+        return seen;
+    });
+
+    const filteredFeatures = computed(() => {
+        let result = features.value;
+
+        if (selectedCategories.value.size > 0) {
+            result = result.filter((f) => selectedCategories.value.has(f.properties.type ?? ''));
+        }
+
+        return result;
+    });
+
+    watch(
+        availableCategories,
+        (cats) => {
+            selectedCategories.value = new Map(cats);
+        },
+        { immediate: true },
+    );
 
     const fetchUsgsEvents_ = async () => {
         isLoading.value = true;
@@ -14,6 +47,11 @@ export const useUsgsStore = defineStore('usgs', () => {
 
         try {
             features.value = await fetchUsgsEvents();
+
+            const cats = [
+                ...new Set(features.value.map((f) => f.properties.type)),
+            ];
+            cats.forEach((cat) => colorManager.rent(cat));
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Unknown error';
         } finally {
@@ -21,5 +59,13 @@ export const useUsgsStore = defineStore('usgs', () => {
         }
     };
 
-    return { features, isLoading, error, fetch: fetchUsgsEvents_ };
+    return {
+        features,
+        isLoading,
+        error,
+        fetch: fetchUsgsEvents_,
+        selectedCategories,
+        availableCategories,
+        filteredFeatures,
+    };
 });

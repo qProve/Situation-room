@@ -11,55 +11,17 @@ const eonetStore = useEonetStore();
 const usgsStore = useUsgsStore();
 
 const isOpen = ref(true);
-const activeOnly = ref(true);
 
-const availableCategories = computed(() => {
-    const seen = new Map<string, string>();
+const toggleEonetCategory = (id: string, title: string, checked: boolean) => {
+    const next = new Map(eonetStore.selectedCategories);
+    checked ? next.set(id, title) : next.delete(id);
+    eonetStore.selectedCategories = next;
+};
 
-    for (const feature of usgsStore.features) {
-        const id = feature.properties.type;
-        const formatedTitle = id[0]?.toUpperCase() + id.slice(1).toLowerCase();
-        if (id) seen.set(id, formatedTitle);
-    }
-
-    return [...seen];
-});
-
-const selectedCategories = ref<Map<string, string>>(new Map());
-
-watch(
-    availableCategories,
-    (cats) => {
-        selectedCategories.value = new Map(cats);
-    },
-    { immediate: true },
-);
-
-const emit = defineEmits<{
-    'update:activeOnly': [value: boolean];
-    'update:selectedCategories': [value: Map<string, string>];
-}>();
-
-watch(
-    activeOnly,
-    (val) => {
-        emit('update:activeOnly', val);
-    },
-    { immediate: true },
-);
-
-watch(
-    selectedCategories,
-    (val) => {
-        emit('update:selectedCategories', new Map(val));
-    },
-    { immediate: true, deep: true },
-);
-
-const toggleCategory = (id: string, value: string, checked: boolean) => {
-    const next = new Map(selectedCategories.value);
-    checked ? next.set(id, value) : next.delete(id);
-    selectedCategories.value = next;
+const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
+    const next = new Map(usgsStore.selectedCategories);
+    checked ? next.set(id, title) : next.delete(id);
+    usgsStore.selectedCategories = next;
 };
 </script>
 
@@ -110,25 +72,40 @@ const toggleCategory = (id: string, value: string, checked: boolean) => {
                 </div>
 
                 <div class="px-4 py-3 flex flex-col gap-3">
-                    <AtomToggle v-model="activeOnly" cursor="cursor-pointer">
-                        Active only
-                    </AtomToggle>
+                    <!-- EONET -->
+                    <div class="flex flex-col gap-2">
+                        <span class="text-xs text-white/40 uppercase tracking-wider">EONET</span>
+                        <AtomToggle v-model="eonetStore.activeOnly" cursor="cursor-pointer">
+                            Active only
+                        </AtomToggle>
+                        <div class="flex flex-col gap-2 pt-1">
+                            <AtomCheckbox
+                                v-for="[id, title] in eonetStore.availableCategories"
+                                :key="id"
+                                cursor="cursor-pointer"
+                                :modelValue="eonetStore.selectedCategories.has(id)"
+                                :color="colorManager.getColor(id)"
+                                @update:modelValue="
+                                    (checked) => toggleEonetCategory(id, title, checked)
+                                "
+                            >
+                                {{ title }}
+                            </AtomCheckbox>
+                        </div>
+                    </div>
 
+                    <!-- USGS -->
                     <div class="border-t border-white/10 pt-3 flex flex-col gap-2">
-                        <span class="text-xs text-white/40 uppercase tracking-wider"
-                            >Categories</span
-                        >
+                        <span class="text-xs text-white/40 uppercase tracking-wider">USGS</span>
                         <AtomCheckbox
-                            v-for="cat in availableCategories"
+                            v-for="[id, title] in usgsStore.availableCategories"
+                            :key="id"
                             cursor="cursor-pointer"
-                            :key="cat[0]"
-                            :modelValue="selectedCategories.has(cat[0])"
-                            :color="colorManager.getColor(cat[0])"
-                            @update:modelValue="
-                                (checked) => toggleCategory(cat[0], cat[1], checked)
-                            "
+                            :modelValue="usgsStore.selectedCategories.has(id)"
+                            :color="colorManager.getColor(id)"
+                            @update:modelValue="(checked) => toggleUsgsCategory(id, title, checked)"
                         >
-                            {{ cat[1] }}
+                            {{ title }}
                         </AtomCheckbox>
                     </div>
                 </div>

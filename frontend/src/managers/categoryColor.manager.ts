@@ -64,6 +64,14 @@ class CategoryColorManager {
     public getColor(categoryId: string): string {
         return this.assignments.get(categoryId) ?? '#ffffff';
     }
+
+    public hasAssignments(): boolean {
+        return this.assignments.size > 0;
+    }
+
+    public getAssignments(): Map<string, string> {
+        return this.assignments;
+    }
 }
 
 export const colorManager = new CategoryColorManager();

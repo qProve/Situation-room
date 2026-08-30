@@ -50,21 +50,18 @@ onUnmounted(() => {
 watch([() => props.features, mapReady], ([features, ready]) => {
     if (!ready || !map) return;
     if (!(features as Feature[]).length) return;
+    if (!colorManager.hasAssignments()) return;
 
     updateSource(features as Feature[]);
 });
 
 const updateSource = (features: Feature[]) => {
     const colorExpression = colorManager.buildExpression();
-
     const source = map?.getSource('features') as maplibregl.GeoJSONSource | undefined;
 
     if (source) {
         source.setData({ type: 'FeatureCollection', features });
-
-        if (map?.getLayer('features-circles')) {
-            map?.setPaintProperty('features-circles', 'circle-color', colorExpression);
-        }
+        map?.setPaintProperty('features-circles', 'circle-color', colorExpression);
     } else {
         map?.addSource('features', {
             type: 'geojson',

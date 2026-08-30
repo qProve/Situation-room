@@ -1,7 +1,7 @@
-import type { EonetFeature, EonetFeatureCollection } from '@/types/eonet';
+import type { EonetFeature, EonetFeatureCollection } from '@/types/eonet.type';
 import http from './http';
 import { ENDPOINTS } from './endpoints';
-import type { UsgsFeature, UsgsFeatureCollection } from '@/types/usgs';
+import type { UsgsFeature, UsgsFeatureCollection } from '@/types/usgs.type';
 
 export const fetchEonetEvents = async (): Promise<EonetFeature[]> => {
     console.log('Eonet fetching...');

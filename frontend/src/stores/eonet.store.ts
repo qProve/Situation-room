@@ -1,5 +1,6 @@
+import { colorManager } from '@/managers/categoryColor.manager';
 import { fetchEonetEvents } from '@/services/events.service';
-import type { EonetFeature } from '@/types/eonet';
+import type { EonetFeature } from '@/types/eonet.type';
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 
@@ -18,6 +19,7 @@ export const useEonetStore = defineStore('eonet', () => {
             const id = feature.properties.categories[0]?.id;
             const title = feature.properties.categories[0]?.title as string;
 
+            if (!id || !title) continue;
             const formatedTitle = title[0]?.toUpperCase() + title?.slice(1).toLowerCase();
             if (id) seen.set(id, formatedTitle);
         }
@@ -31,17 +33,21 @@ export const useEonetStore = defineStore('eonet', () => {
             : features.value;
 
         if (selectedCategories.value.size > 0) {
-            result = result.filter((f) => {
-                selectedCategories.value.has(f.properties.categories[0]?.id ?? '');
-            });
+            result = result.filter((f) =>
+                selectedCategories.value.has(f.properties.categories[0]?.id ?? ''),
+            );
         }
 
         return result;
     });
 
-    watch(availableCategories, (cats) => {
-        selectedCategories.value = new Map(cats);
-    });
+    watch(
+        availableCategories,
+        (cats) => {
+            selectedCategories.value = new Map(cats);
+        },
+        { immediate: true },
+    );
 
     const fetchEonetEvents_ = async () => {
         isLoading.value = true;
@@ -49,6 +55,11 @@ export const useEonetStore = defineStore('eonet', () => {
 
         try {
             features.value = await fetchEonetEvents();
+
+            const cats = [
+                ...new Set(features.value.map((f) => f.properties.categories[0]?.id ?? '')),
+            ];
+            cats.forEach((cat) => colorManager.rent(cat));
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Unknown error';
         } finally {
