@@ -56,15 +56,6 @@ const normalizedFeatures = computed((): NormalizedFeature[] => {
 
         <Transition name="fade">
             <div
-                v-if="eonetStore.isLoading || usgsStore.isLoading"
-                class="absolute inset-0 flex items-center justify-center bg-black/60 z-10"
-            >
-                <AtomSpinner />
-            </div>
-        </Transition>
-
-        <Transition name="fade">
-            <div
                 v-if="eonetStore.error || usgsStore.error"
                 class="absolute inset-0 flex items-center justify-center bg-black/60 z-10"
             >

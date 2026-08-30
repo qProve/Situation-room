@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { ref } from 'vue';
 import AtomButton from '../atoms/AtomButton.vue';
 import AtomToggle from '../atoms/AtomToggle.vue';
 import { useEonetStore } from '@/stores/eonet.store.ts';
 import AtomCheckbox from '../atoms/AtomCheckbox.vue';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
 import { useUsgsStore } from '@/stores/usgs.store.ts';
+import AtomAccordion from '../atoms/AtomAccordion.vue';
 
 const eonetStore = useEonetStore();
 const usgsStore = useUsgsStore();
@@ -71,43 +72,51 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
                     />
                 </div>
 
-                <div class="px-4 py-3 flex flex-col gap-3">
-                    <!-- EONET -->
-                    <div class="flex flex-col gap-2">
-                        <span class="text-xs text-white/40 uppercase tracking-wider">EONET</span>
-                        <AtomToggle v-model="eonetStore.activeOnly" cursor="cursor-pointer">
-                            Active only
-                        </AtomToggle>
-                        <div class="flex flex-col gap-2 pt-1">
+                <div class="px-1 py-3 flex flex-col gap-3">
+                    <AtomAccordion 
+                        title="Eonet"
+                        cursor="cursor-pointer"
+                        :loading="eonetStore.isLoading"
+                    >
+                        <div class="flex flex-col gap-2">
+                            <AtomToggle v-model="eonetStore.activeOnly" cursor="cursor-pointer">
+                                Active only
+                            </AtomToggle>
+                            <div class="flex flex-col gap-2 pt-1">
+                                <AtomCheckbox
+                                    v-for="[id, title] in eonetStore.availableCategories"
+                                    :key="id"
+                                    cursor="cursor-pointer"
+                                    :modelValue="eonetStore.selectedCategories.has(id)"
+                                    :color="colorManager.getColor(id)"
+                                    @update:modelValue="
+                                        (checked) => toggleEonetCategory(id, title, checked)
+                                    "
+                                >
+                                    {{ title }}
+                                </AtomCheckbox>
+                            </div>
+                        </div>
+                    </AtomAccordion>
+
+                    <AtomAccordion 
+                        title="Usgs"
+                        cursor="cursor-pointer"
+                        :loading="usgsStore.isLoading"
+                    >
+                        <div class="border-t border-white/10 pt-3 flex flex-col gap-2">
                             <AtomCheckbox
-                                v-for="[id, title] in eonetStore.availableCategories"
+                                v-for="[id, title] in usgsStore.availableCategories"
                                 :key="id"
                                 cursor="cursor-pointer"
-                                :modelValue="eonetStore.selectedCategories.has(id)"
+                                :modelValue="usgsStore.selectedCategories.has(id)"
                                 :color="colorManager.getColor(id)"
-                                @update:modelValue="
-                                    (checked) => toggleEonetCategory(id, title, checked)
-                                "
+                                @update:modelValue="(checked) => toggleUsgsCategory(id, title, checked)"
                             >
                                 {{ title }}
                             </AtomCheckbox>
                         </div>
-                    </div>
-
-                    <!-- USGS -->
-                    <div class="border-t border-white/10 pt-3 flex flex-col gap-2">
-                        <span class="text-xs text-white/40 uppercase tracking-wider">USGS</span>
-                        <AtomCheckbox
-                            v-for="[id, title] in usgsStore.availableCategories"
-                            :key="id"
-                            cursor="cursor-pointer"
-                            :modelValue="usgsStore.selectedCategories.has(id)"
-                            :color="colorManager.getColor(id)"
-                            @update:modelValue="(checked) => toggleUsgsCategory(id, title, checked)"
-                        >
-                            {{ title }}
-                        </AtomCheckbox>
-                    </div>
+                    </AtomAccordion>
                 </div>
             </div>
         </Transition>

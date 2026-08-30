@@ -1,5 +1,19 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const props = withDefaults(
+    defineProps<{
+        color?: string;
+        size: string;
+    }>(),
+    {
+        color: "#ffffff"
+    }
+);
+</script>
 
 <template>
-    <div class="fa-solid fa-spinner text-6xl animate-spin" style="color: #fff"></div>
+    <div 
+        class="fa-solid fa-spinner animate-spin"
+        :class="[size]"
+        :style="{color: color}">
+    </div>
 </template>
