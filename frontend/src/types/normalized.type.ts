@@ -1,4 +1,4 @@
-import type { Feature, Point, Polygon } from "geojson";
+import type { Feature, Point, Polygon } from 'geojson';
 
 export interface NormalizedProperties {
     id: string;

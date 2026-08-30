@@ -48,9 +48,7 @@ export const useUsgsStore = defineStore('usgs', () => {
         try {
             features.value = await fetchUsgsEvents();
 
-            const cats = [
-                ...new Set(features.value.map((f) => f.properties.type)),
-            ];
+            const cats = [...new Set(features.value.map((f) => f.properties.type))];
             cats.forEach((cat) => colorManager.rent(cat));
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Unknown error';

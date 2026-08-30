@@ -30,7 +30,7 @@ const normalizedFeatures = computed((): NormalizedFeature[] => {
             magnitudeUnit: f.properties.magnitudeUnit,
         },
     }));
-    
+
     const usgs: NormalizedFeature[] = usgsStore.filteredFeatures.map((f) => ({
         ...f,
         properties: {
