@@ -32,11 +32,9 @@ export const useEonetStore = defineStore('eonet', () => {
             ? features.value.filter((f) => f.properties.closed === null)
             : features.value;
 
-        if (selectedCategories.value.size > 0) {
-            result = result.filter((f) =>
-                selectedCategories.value.has(f.properties.categories[0]?.id ?? ''),
-            );
-        }
+        result = result.filter((f) =>
+            selectedCategories.value.has(f.properties.categories[0]?.id ?? ''),
+        );
 
         return result;
     });
@@ -46,7 +44,7 @@ export const useEonetStore = defineStore('eonet', () => {
         (cats) => {
             selectedCategories.value = new Map(cats);
         },
-        { immediate: true },
+        { immediate: true, flush: 'sync' },
     );
 
     const fetchEonetEvents_ = async () => {

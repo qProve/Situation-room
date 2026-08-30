@@ -26,9 +26,7 @@ export const useUsgsStore = defineStore('usgs', () => {
     const filteredFeatures = computed(() => {
         let result = features.value;
 
-        if (selectedCategories.value.size > 0) {
-            result = result.filter((f) => selectedCategories.value.has(f.properties.type ?? ''));
-        }
+        result = result.filter((f) => selectedCategories.value.has(f.properties.type ?? ''));
 
         return result;
     });
