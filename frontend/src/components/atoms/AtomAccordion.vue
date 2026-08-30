@@ -7,13 +7,15 @@ const props = withDefaults(
         title: string;
         cursor?: 'cursor-pointer' | 'cursor-default';
         loading?: boolean;
+        openByDef?: boolean;
     }>(),
     {
         cursor: 'cursor-pointer',
+        openByDef: false,
     }
 );
 
-const isOpen = ref(false);
+const isOpen = ref(props.openByDef);
 
 const toggleAccordion = () => {
     if (!props.loading) isOpen.value = !isOpen.value;
