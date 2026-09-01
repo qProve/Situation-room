@@ -4,14 +4,10 @@ export interface NormalizedProperties {
     id: string;
     title: string;
     category: string;
+    date: string;
     link?: string;
-    closed?: string | null;
-    date?: string;
-    magnitudeValue?: number | null;
-    magnitudeUnit?: string | null;
-    time?: number;
-    mag?: number | null;
-    place?: string;
+    description?: string | null;
+    extra?: Record<string, unknown>;
 }
 
 export type NormalizedFeature = Feature<Point | Polygon, NormalizedProperties>;

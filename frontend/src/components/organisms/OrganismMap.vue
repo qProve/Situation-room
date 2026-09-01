@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useEonetStore } from '@/stores/eonet.store.ts';
-import type { Feature, Point, Polygon } from 'geojson';
 import { computed, onMounted } from 'vue';
 import AtomMap from '../atoms/AtomMap.vue';
-import AtomSpinner from '../atoms/AtomSpinner.vue';
 import OrganismMapControlPanel from './OrganismMapControlPanel.vue';
 import { useUsgsStore } from '@/stores/usgs.store.ts';
 import type { NormalizedFeature } from '@/types/normalized.type.ts';
@@ -20,14 +18,16 @@ const normalizedFeatures = computed((): NormalizedFeature[] => {
     const eonet: NormalizedFeature[] = eonetStore.filteredFeatures.map((f) => ({
         ...f,
         properties: {
-            id: f.properties.id,
+            id: f.properties.id as string,
             title: f.properties.title,
             category: f.properties.categories[0]?.id ?? 'unknown',
             link: f.properties.link,
-            closed: f.properties.closed,
             date: f.properties.date,
-            magnitudeValue: f.properties.magnitudeValue,
-            magnitudeUnit: f.properties.magnitudeUnit,
+            description: f.properties.description,
+            extra: {
+                magnitude: f.properties.magnitudeValue ? `${f.properties.magnitudeValue} ${f.properties.magnitudeUnit}` : null,
+                closed: f.properties.closed,
+            },
         },
     }));
 
@@ -37,10 +37,14 @@ const normalizedFeatures = computed((): NormalizedFeature[] => {
             id: f.id as string,
             title: f.properties.title,
             category: f.properties.type ?? 'unknown',
-            time: f.properties.time,
-            mag: f.properties.mag,
-            place: f.properties.place,
             link: f.properties.url,
+            date: new Date(f.properties.time).toISOString(),
+            description: f.properties.place,
+            extra: {
+                magnitude: f.properties.mag,
+                alert: f.properties.alert,
+                felt: f.properties.felt,
+            }
         },
     }));
 

@@ -97,13 +97,18 @@ const addClickHandler = () => {
         if (!feature) return;
 
         const coordinates = (feature.geometry as Point).coordinates as [number, number];
+        const rounded: [number, number] = [
+            Math.round(coordinates[0] * 1e6) / 1e6,
+            Math.round(coordinates[1] * 1e6) / 1e6,
+        ];
+
         const properties = feature.properties;
 
-        popupLngLat = coordinates;
+        popupLngLat = rounded;
 
         popup?.remove();
         popup = new maplibregl.Popup()
-            .setLngLat(coordinates)
+            .setLngLat(rounded)
             .setDOMContent(createPopupContent(properties))
             .addTo(map!);
 
@@ -119,6 +124,9 @@ const addClickHandler = () => {
 
         const visible = isPointVisible(popupLngLat);
         const el = popup.getElement();
+        const pos = map!.project(popupLngLat);
+        el.style.transform = `translate(${Math.round(pos.x)}px, ${Math.round(pos.y)}px)`;
+
         el.style.opacity = visible ? '1' : '0';
         el.style.pointerEvents = visible ? 'auto' : 'none';
     });
