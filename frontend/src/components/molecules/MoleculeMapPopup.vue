@@ -6,7 +6,8 @@ const props = defineProps<{
     properties: NormalizedProperties;
 }>();
 
-const categoryFormatted = props.properties.category[0]?.toUpperCase() + props.properties.category.slice(1);
+const categoryFormatted =
+    props.properties.category[0]?.toUpperCase() + props.properties.category.slice(1);
 
 const extra = computed(() => {
     if (!props.properties.extra) return {};
@@ -15,14 +16,16 @@ const extra = computed(() => {
     }
 
     return props.properties.extra;
-})
+});
 </script>
 
 <template>
-    <div class="bg-white/10 backdrop-blur border border-white/10 rounded-lg p-3 min-w-48 max-w-64 shadow-xl">
+    <div
+        class="bg-white/10 backdrop-blur border border-white/10 rounded-lg p-3 min-w-48 max-w-64 shadow-xl"
+    >
         <span class="block text-xs text-white italic mb-1">{{ properties.id }}</span>
         <span class="block text-sm font-semibold text-white mb-2">{{ properties.title }}</span>
-        
+
         <div v-if="properties.description" class="text-xs text-white mb-2">
             {{ properties.description }}
         </div>

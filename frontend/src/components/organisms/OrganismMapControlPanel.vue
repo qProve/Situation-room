@@ -73,7 +73,7 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
                 </div>
 
                 <div class="px-1 py-3 flex flex-col gap-3">
-                    <AtomAccordion 
+                    <AtomAccordion
                         title="Eonet"
                         cursor="cursor-pointer"
                         :loading="eonetStore.isLoading"
@@ -99,7 +99,7 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
                         </div>
                     </AtomAccordion>
 
-                    <AtomAccordion 
+                    <AtomAccordion
                         title="Usgs"
                         cursor="cursor-pointer"
                         :loading="usgsStore.isLoading"
@@ -111,7 +111,9 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
                                 cursor="cursor-pointer"
                                 :modelValue="usgsStore.selectedCategories.has(id)"
                                 :color="colorManager.getColor(id)"
-                                @update:modelValue="(checked) => toggleUsgsCategory(id, title, checked)"
+                                @update:modelValue="
+                                    (checked) => toggleUsgsCategory(id, title, checked)
+                                "
                             >
                                 {{ title }}
                             </AtomCheckbox>

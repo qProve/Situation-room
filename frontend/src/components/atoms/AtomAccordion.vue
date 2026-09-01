@@ -12,14 +12,14 @@ const props = withDefaults(
     {
         cursor: 'cursor-pointer',
         openByDef: false,
-    }
+    },
 );
 
 const isOpen = ref(props.openByDef);
 
 const toggleAccordion = () => {
     if (!props.loading) isOpen.value = !isOpen.value;
-}
+};
 
 const onEnter = (el: Element) => {
     const html = el as HTMLElement;
@@ -45,10 +45,7 @@ const onAfterLeave = (el: Element) => {
 </script>
 
 <template>
-    <div
-        class="rounded-lg overflow-hidden"
-        :class="[{'border-white/20': isOpen}]"
-    >
+    <div class="rounded-lg overflow-hidden" :class="[{ 'border-white/20': isOpen }]">
         <button
             @click="toggleAccordion()"
             class="w-full px-2 py-3 text-left text-sm font-medium flex justify-between items-center text-white/60 hover:bg-white/5 transition-colors duration-150"
@@ -62,15 +59,11 @@ const onAfterLeave = (el: Element) => {
                     :class="{ 'rotate-180': isOpen }"
                 />
 
-                <AtomSpinner
-                    v-else
-                    color="rgba(255,255,255,0.6)"
-                    size="text-md"
-                />
+                <AtomSpinner v-else color="rgba(255,255,255,0.6)" size="text-md" />
             </span>
         </button>
-        
-        <Transition 
+
+        <Transition
             @enter="onEnter"
             @after-enter="onAfterEnter"
             @leave="onLeave"

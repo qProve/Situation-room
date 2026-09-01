@@ -5,15 +5,11 @@ const props = withDefaults(
         size: string;
     }>(),
     {
-        color: "#ffffff"
-    }
+        color: '#ffffff',
+    },
 );
 </script>
 
 <template>
-    <div 
-        class="fa-solid fa-spinner animate-spin"
-        :class="[size]"
-        :style="{color: color}">
-    </div>
+    <div class="fa-solid fa-spinner animate-spin" :class="[size]" :style="{ color: color }"></div>
 </template>

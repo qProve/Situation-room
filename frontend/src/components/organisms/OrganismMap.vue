@@ -25,7 +25,9 @@ const normalizedFeatures = computed((): NormalizedFeature[] => {
             date: f.properties.date,
             description: f.properties.description,
             extra: {
-                magnitude: f.properties.magnitudeValue ? `${f.properties.magnitudeValue} ${f.properties.magnitudeUnit}` : null,
+                magnitude: f.properties.magnitudeValue
+                    ? `${f.properties.magnitudeValue} ${f.properties.magnitudeUnit}`
+                    : null,
                 closed: f.properties.closed,
             },
         },
@@ -44,7 +46,7 @@ const normalizedFeatures = computed((): NormalizedFeature[] => {
                 magnitude: f.properties.mag,
                 alert: f.properties.alert,
                 felt: f.properties.felt,
-            }
+            },
         },
     }));
 
