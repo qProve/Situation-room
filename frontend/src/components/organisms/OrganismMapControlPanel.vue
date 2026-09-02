@@ -24,6 +24,10 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
     checked ? next.set(id, title) : next.delete(id);
     usgsStore.selectedCategories = next;
 };
+
+const toggleAllCategories = (store: typeof eonetStore | typeof usgsStore, checked: boolean) => {
+    store.selectedCategories = checked ? new Map(store.availableCategories) : new Map();
+};
 </script>
 
 <template>
@@ -77,6 +81,14 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
                         title="Eonet"
                         cursor="cursor-pointer"
                         :loading="eonetStore.isLoading"
+                        :checkbox="true"
+                        :checkboxValue="
+                            eonetStore.selectedCategories.size ===
+                            eonetStore.availableCategories.size
+                        "
+                        @update:checkboxValue="
+                            (checked) => toggleAllCategories(eonetStore, checked)
+                        "
                     >
                         <div class="flex flex-col gap-2">
                             <AtomToggle v-model="eonetStore.activeOnly" cursor="cursor-pointer">
@@ -103,6 +115,11 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
                         title="Usgs"
                         cursor="cursor-pointer"
                         :loading="usgsStore.isLoading"
+                        :checkbox="true"
+                        :checkboxValue="
+                            usgsStore.selectedCategories.size === usgsStore.availableCategories.size
+                        "
+                        @update:checkboxValue="(checked) => toggleAllCategories(usgsStore, checked)"
                     >
                         <div class="border-t border-white/10 pt-3 flex flex-col gap-2">
                             <AtomCheckbox

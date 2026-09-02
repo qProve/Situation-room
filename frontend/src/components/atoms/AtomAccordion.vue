@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import AtomSpinner from './AtomSpinner.vue';
+import AtomCheckbox from './AtomCheckbox.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -8,12 +9,20 @@ const props = withDefaults(
         cursor?: 'cursor-pointer' | 'cursor-default';
         loading?: boolean;
         openByDef?: boolean;
+        checkbox?: boolean;
+        checkboxValue?: boolean;
     }>(),
     {
         cursor: 'cursor-pointer',
         openByDef: false,
+        checkbox: false,
+        checkboxValue: false,
     },
 );
+
+defineEmits<{
+    'update:checkboxValue': [value: boolean];
+}>();
 
 const isOpen = ref(props.openByDef);
 
@@ -52,15 +61,22 @@ const onAfterLeave = (el: Element) => {
             :class="[cursor]"
         >
             <span>{{ title }}</span>
-            <span>
+            <div class="flex items-center gap-2">
+                <AtomCheckbox
+                    v-if="checkbox"
+                    :modelValue="checkboxValue"
+                    cursor="cursor-pointer"
+                    :showCheckmark="true"
+                    @update:modelValue="$emit('update:checkboxValue', $event)"
+                    @click.stop
+                />
                 <i
                     v-if="!loading"
                     class="fa-solid fa-chevron-down text-white/40 transition-transform duration-200 text-xs"
                     :class="{ 'rotate-180': isOpen }"
                 />
-
                 <AtomSpinner v-else color="rgba(255,255,255,0.6)" size="text-md" />
-            </span>
+            </div>
         </button>
 
         <Transition
