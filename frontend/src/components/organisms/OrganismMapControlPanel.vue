@@ -121,7 +121,7 @@ const toggleAllCategories = (store: typeof eonetStore | typeof usgsStore, checke
                         "
                         @update:checkboxValue="(checked) => toggleAllCategories(usgsStore, checked)"
                     >
-                        <div class="border-t border-white/10 pt-3 flex flex-col gap-2">
+                        <div class="pt-3 flex flex-col gap-2">
                             <AtomCheckbox
                                 v-for="[id, title] in usgsStore.availableCategories"
                                 :key="id"
