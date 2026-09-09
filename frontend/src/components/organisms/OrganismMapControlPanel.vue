@@ -28,6 +28,10 @@ const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
 const toggleAllCategories = (store: typeof eonetStore | typeof usgsStore, checked: boolean) => {
     store.selectedCategories = checked ? new Map(store.availableCategories) : new Map();
 };
+
+const toggleSource = (store: typeof eonetStore | typeof usgsStore, checked: boolean) => {
+    store.enabled = checked;
+};
 </script>
 
 <template>

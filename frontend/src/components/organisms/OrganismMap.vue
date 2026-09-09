@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useEonetStore } from '@/stores/eonet.store.ts';
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import AtomMap from '../atoms/AtomMap.vue';
 import OrganismMapControlPanel from './OrganismMapControlPanel.vue';
 import { useUsgsStore } from '@/stores/usgs.store.ts';
@@ -8,11 +8,6 @@ import type { NormalizedFeature } from '@/types/normalized.type.ts';
 
 const eonetStore = useEonetStore();
 const usgsStore = useUsgsStore();
-
-onMounted(() => {
-    eonetStore.fetch();
-    usgsStore.fetch();
-});
 
 const normalizedFeatures = computed((): NormalizedFeature[] => {
     const eonet: NormalizedFeature[] = eonetStore.filteredFeatures.map((f) => ({

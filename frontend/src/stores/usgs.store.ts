@@ -8,6 +8,7 @@ export const useUsgsStore = defineStore('usgs', () => {
     const features = ref<UsgsFeature[]>([]);
     const isLoading = ref(false);
     const error = ref<string | null>(null);
+    const fetched = ref(false);
 
     const selectedCategories = ref<Map<string, string>>(new Map());
 
@@ -40,6 +41,8 @@ export const useUsgsStore = defineStore('usgs', () => {
     );
 
     const fetchUsgsEvents_ = async () => {
+        if (fetched.value) return;
+
         isLoading.value = true;
         error.value = null;
 
@@ -48,6 +51,7 @@ export const useUsgsStore = defineStore('usgs', () => {
 
             const cats = [...new Set(features.value.map((f) => f.properties.type))];
             cats.forEach((cat) => colorManager.rent(cat));
+            fetched.value = true;
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Unknown error';
         } finally {
@@ -59,6 +63,7 @@ export const useUsgsStore = defineStore('usgs', () => {
         features,
         isLoading,
         error,
+        fetched,
         fetch: fetchUsgsEvents_,
         selectedCategories,
         availableCategories,

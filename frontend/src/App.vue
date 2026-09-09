@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import OrganismBottomPanel from './components/organisms/OrganismBottomPanel.vue';
 import OrganismMap from './components/organisms/OrganismMap.vue';
+import { usePresetsStore } from './stores/presets.store.ts';
+
+const presetsStore = usePresetsStore();
+
+onMounted(() => {
+    presetsStore.applyPreset('natural');
+});
 </script>
 
 <template>

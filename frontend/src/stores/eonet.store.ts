@@ -8,6 +8,7 @@ export const useEonetStore = defineStore('eonet', () => {
     const features = ref<EonetFeature[]>([]);
     const isLoading = ref(false);
     const error = ref<string | null>(null);
+    const fetched = ref(false);
 
     const activeOnly = ref(true);
     const selectedCategories = ref<Map<string, string>>(new Map());
@@ -48,6 +49,8 @@ export const useEonetStore = defineStore('eonet', () => {
     );
 
     const fetchEonetEvents_ = async () => {
+        if (fetched.value) return;
+
         isLoading.value = true;
         error.value = null;
 
@@ -58,6 +61,7 @@ export const useEonetStore = defineStore('eonet', () => {
                 ...new Set(features.value.map((f) => f.properties.categories[0]?.id ?? '')),
             ];
             cats.forEach((cat) => colorManager.rent(cat));
+            fetched.value = true;
         } catch (e) {
             error.value = e instanceof Error ? e.message : 'Unknown error';
         } finally {
@@ -69,6 +73,7 @@ export const useEonetStore = defineStore('eonet', () => {
         features,
         isLoading,
         error,
+        fetched,
         fetch: fetchEonetEvents_,
         activeOnly,
         selectedCategories,
