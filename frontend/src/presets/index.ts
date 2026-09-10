@@ -1,4 +1,5 @@
 import { naturalPreset } from './natural.preset';
+import { transportPreset } from './transport.preset';
 
 export interface Preset {
     id: string;
@@ -6,4 +7,4 @@ export interface Preset {
     sources: string[];
 }
 
-export const presets: Preset[] = [naturalPreset];
+export const presets: Preset[] = [naturalPreset, transportPreset];

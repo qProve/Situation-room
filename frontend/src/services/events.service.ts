@@ -2,6 +2,7 @@ import type { EonetFeature, EonetFeatureCollection } from '@/types/eonet.type';
 import http from './http';
 import { ENDPOINTS } from './endpoints';
 import type { UsgsFeature, UsgsFeatureCollection } from '@/types/usgs.type';
+import type { OpenskyResponse, OpenskyState } from '@/types/opensky.type';
 
 export const fetchEonetEvents = async (): Promise<EonetFeature[]> => {
     console.log('Eonet fetching...');
@@ -21,4 +22,14 @@ export const fetchUsgsEvents = async (): Promise<UsgsFeature[]> => {
     console.log('Usgs fetched');
 
     return data.features;
+};
+
+export const fetchOpenskyEvents = async (): Promise<OpenskyState[]> => {
+    console.log('Opensky fetching...');
+
+    const { data } = await http.get<OpenskyResponse>(ENDPOINTS.events.opensky);
+
+    console.log('Opensky fetched');
+
+    return data.states;
 };
