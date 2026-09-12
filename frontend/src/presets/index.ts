@@ -7,4 +7,7 @@ export interface Preset {
     sources: string[];
 }
 
-export const presets: Preset[] = [naturalPreset, transportPreset];
+export const presets: Preset[] = [
+    naturalPreset,
+    transportPreset
+];

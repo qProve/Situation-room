@@ -49,7 +49,6 @@ onUnmounted(() => {
 
 watch([() => props.features, mapReady], ([features, ready]) => {
     if (!ready || !map) return;
-    if (!(features as Feature[]).length) return;
     if (!colorManager.hasAssignments()) return;
 
     updateSource(features as Feature[]);

@@ -1,36 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import AtomButton from '../atoms/AtomButton.vue';
-import AtomToggle from '../atoms/AtomToggle.vue';
-import { useEonetStore } from '@/stores/eonet.store.ts';
+import AtomAccordion from '../atoms/AtomAccordion.vue';
 import AtomCheckbox from '../atoms/AtomCheckbox.vue';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
-import { useUsgsStore } from '@/stores/usgs.store.ts';
-import AtomAccordion from '../atoms/AtomAccordion.vue';
-
-const eonetStore = useEonetStore();
-const usgsStore = useUsgsStore();
+import { sourceRegistry } from '@/sources/index.ts';
+import type { SourceStore } from '@/sources/registry';
 
 const isOpen = ref(true);
 
-const toggleEonetCategory = (id: string, title: string, checked: boolean) => {
-    const next = new Map(eonetStore.selectedCategories);
+const sources = sourceRegistry.map((source) => ({
+    source,
+    store: source.useStore(),
+}));
+
+const toggleCategory = (store: SourceStore, id: string, title: string, checked: boolean) => {
+    const next = new Map(store.selectedCategories);
     checked ? next.set(id, title) : next.delete(id);
-    eonetStore.selectedCategories = next;
+    store.selectedCategories = next;
 };
 
-const toggleUsgsCategory = (id: string, title: string, checked: boolean) => {
-    const next = new Map(usgsStore.selectedCategories);
-    checked ? next.set(id, title) : next.delete(id);
-    usgsStore.selectedCategories = next;
-};
-
-const toggleAllCategories = (store: typeof eonetStore | typeof usgsStore, checked: boolean) => {
-    store.selectedCategories = checked ? new Map(store.availableCategories) : new Map();
-};
-
-const toggleSource = (store: typeof eonetStore | typeof usgsStore, checked: boolean) => {
-    store.enabled = checked;
+const toggleAll = (store: SourceStore, checked: boolean) => {
+    store.selectedCategories = checked ? new Map(store.availableCategories) : new Map<string, string>();
 };
 </script>
 
@@ -82,62 +73,32 @@ const toggleSource = (store: typeof eonetStore | typeof usgsStore, checked: bool
 
                 <div class="px-1 py-3 flex flex-col gap-3">
                     <AtomAccordion
-                        title="Eonet"
+                        v-for="{ source, store } in sources"
+                        :key="source.id"
+                        :title="source.label"
                         cursor="cursor-pointer"
-                        :loading="eonetStore.isLoading"
+                        :loading="store.isLoading"
                         :checkbox="true"
-                        :checkboxValue="
-                            eonetStore.selectedCategories.size ===
-                            eonetStore.availableCategories.size
-                        "
-                        @update:checkboxValue="
-                            (checked) => toggleAllCategories(eonetStore, checked)
-                        "
+                        :checkboxValue="store.selectedCategories.size === store.availableCategories.size"
+                        @update:checkboxValue="(checked) => toggleAll(store, checked)"
                     >
                         <div class="flex flex-col gap-2">
-                            <AtomToggle v-model="eonetStore.activeOnly" cursor="cursor-pointer">
-                                Active only
-                            </AtomToggle>
+                            <component
+                                v-if="source.controls"
+                                :is="source.controls"
+                            />
                             <div class="flex flex-col gap-2 pt-1">
                                 <AtomCheckbox
-                                    v-for="[id, title] in eonetStore.availableCategories"
+                                    v-for="[id, title] in store.availableCategories"
                                     :key="id"
                                     cursor="cursor-pointer"
-                                    :modelValue="eonetStore.selectedCategories.has(id)"
+                                    :modelValue="store.selectedCategories.has(id)"
                                     :color="colorManager.getColor(id)"
-                                    @update:modelValue="
-                                        (checked) => toggleEonetCategory(id, title, checked)
-                                    "
+                                    @update:modelValue="(checked) => toggleCategory(store, id, title, checked)"
                                 >
                                     {{ title }}
                                 </AtomCheckbox>
                             </div>
-                        </div>
-                    </AtomAccordion>
-
-                    <AtomAccordion
-                        title="Usgs"
-                        cursor="cursor-pointer"
-                        :loading="usgsStore.isLoading"
-                        :checkbox="true"
-                        :checkboxValue="
-                            usgsStore.selectedCategories.size === usgsStore.availableCategories.size
-                        "
-                        @update:checkboxValue="(checked) => toggleAllCategories(usgsStore, checked)"
-                    >
-                        <div class="pt-3 flex flex-col gap-2">
-                            <AtomCheckbox
-                                v-for="[id, title] in usgsStore.availableCategories"
-                                :key="id"
-                                cursor="cursor-pointer"
-                                :modelValue="usgsStore.selectedCategories.has(id)"
-                                :color="colorManager.getColor(id)"
-                                @update:modelValue="
-                                    (checked) => toggleUsgsCategory(id, title, checked)
-                                "
-                            >
-                                {{ title }}
-                            </AtomCheckbox>
                         </div>
                     </AtomAccordion>
                 </div>

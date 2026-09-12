@@ -34,10 +34,12 @@ export const useUsgsStore = defineStore('usgs', () => {
 
     watch(
         availableCategories,
-        (cats) => {
-            selectedCategories.value = new Map(cats);
+        (cats, prevCats) => {
+            if (prevCats?.size === 0 && cats.size > 0) {
+                selectedCategories.value = new Map(cats);
+            }
         },
-        { immediate: true },
+        { immediate: true, flush: 'sync' },
     );
 
     const fetchUsgsEvents_ = async () => {
