@@ -1,10 +1,8 @@
-import { eonetSource } from "./eonet.source";
-import type { SourceDefinition } from "./registry";
-import { usgsSource } from "./usgs.source";
+import { eonetSource } from './eonet.source';
+import { openskySource } from './opensky.source';
+import type { SourceDefinition } from './registry';
+import { usgsSource } from './usgs.source';
 
-export type { SourceDefinition }
+export type { SourceDefinition };
 
-export const sourceRegistry: SourceDefinition[] = [
-    eonetSource,
-    usgsSource
-];
+export const sourceRegistry: SourceDefinition[] = [eonetSource, usgsSource, openskySource];

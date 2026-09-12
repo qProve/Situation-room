@@ -1,14 +1,14 @@
-import { useUsgsStore } from "@/stores/usgs.store";
-import type { SourceDefinition } from "./registry";
-import type { NormalizedFeature } from "@/types/normalized.type";
-import type { UsgsFeature } from "@/types/usgs.type";
+import { useUsgsStore } from '@/stores/usgs.store';
+import type { SourceDefinition } from './registry';
+import type { NormalizedFeature } from '@/types/normalized.type';
+import type { UsgsFeature } from '@/types/usgs.type';
 
 export const usgsSource: SourceDefinition = {
     id: 'usgs',
     label: 'USGS',
     useStore: useUsgsStore,
     normalize: (f: unknown): NormalizedFeature => {
-        const feature = f as UsgsFeature
+        const feature = f as UsgsFeature;
         return {
             ...feature,
             properties: {
@@ -24,6 +24,6 @@ export const usgsSource: SourceDefinition = {
                     felt: feature.properties.felt,
                 },
             },
-        }
+        };
     },
 };

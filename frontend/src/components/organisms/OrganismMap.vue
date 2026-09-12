@@ -10,11 +10,12 @@ const sources = sourceRegistry.map((source) => ({
     store: source.useStore(),
 }));
 
-const normalizedFeatures = computed((): NormalizedFeature[] => {
-    return sources.flatMap(({ source, store }) => {
-        return store.filteredFeatures.map(source.normalize);
-    });
-});
+const sourcesWithFeatures = computed(() =>
+    sources.map(({ source, store }) => ({
+        source,
+        features: (store.filteredFeatures as unknown[]).map(source.normalize),
+    })),
+);
 
 const activeError = computed(() => {
     for (const { store } of sources) {
@@ -26,7 +27,7 @@ const activeError = computed(() => {
 
 <template>
     <div class="relative h-full w-full">
-        <AtomMap :features="normalizedFeatures" />
+        <AtomMap :sources="sourcesWithFeatures" />
 
         <OrganismMapControlPanel />
 
@@ -43,7 +44,11 @@ const activeError = computed(() => {
 
 <style scoped>
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.3s ease; }
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
 .fade-enter-from,
-.fade-leave-to { opacity: 0; }
+.fade-leave-to {
+    opacity: 0;
+}
 </style>

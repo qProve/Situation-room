@@ -7,6 +7,7 @@ export interface NormalizedProperties {
     date: string;
     link?: string;
     description?: string | null;
+    heading?: number | null;
     extra?: Record<string, unknown>;
 }
 

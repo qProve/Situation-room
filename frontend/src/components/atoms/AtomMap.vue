@@ -5,17 +5,19 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Feature, Point } from 'geojson';
 import MoleculeMapPopup from '../molecules/MoleculeMapPopup.vue';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
+import type { SourceDefinition } from '@/sources/registry.ts';
+import { createIconImage } from '@/utils/iconCanvas.ts';
 
 const props = withDefaults(
     defineProps<{
         center?: maplibregl.LngLatLike;
         zoom?: number;
-        features: Feature[];
+        sources: { source: SourceDefinition; features: Feature[] }[];
     }>(),
     {
         center: () => [0, 0],
         zoom: 2.5,
-        features: () => [],
+        sources: () => [],
     },
 );
 
@@ -47,38 +49,65 @@ onUnmounted(() => {
     map?.remove();
 });
 
-watch([() => props.features, mapReady], ([features, ready]) => {
+watch([() => props.sources, mapReady], ([sources, ready]) => {
     if (!ready || !map) return;
     if (!colorManager.hasAssignments()) return;
 
-    updateSource(features as Feature[]);
+    for (const { source, features } of sources) {
+        updateSource(source, features);
+    }
 });
 
-const updateSource = (features: Feature[]) => {
-    const colorExpression = colorManager.buildExpression();
-    const source = map?.getSource('features') as maplibregl.GeoJSONSource | undefined;
+const updateSource = async (sourceDef: SourceDefinition, features: Feature[]) => {
+    const sourceId = sourceDef.id;
+    const layerId = `${sourceId}-layer`;
+    const layerConfig = sourceDef.layerConfig ?? { type: 'circle' };
 
-    if (source) {
-        source.setData({ type: 'FeatureCollection', features });
-        map?.setPaintProperty('features-circles', 'circle-color', colorExpression);
+    const existingSource = map?.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+
+    if (existingSource) {
+        existingSource.setData({ type: 'FeatureCollection', features });
+
+        if (layerConfig.type === 'circle') {
+            map?.setPaintProperty(layerId, 'circle-color', colorManager.buildExpression());
+        }
     } else {
-        map?.addSource('features', {
+        map?.addSource(sourceId, {
             type: 'geojson',
             data: { type: 'FeatureCollection', features },
         });
 
-        map?.addLayer({
-            id: 'features-circles',
-            type: 'circle',
-            source: 'features',
-            paint: {
-                'circle-radius': 6,
-                'circle-color': colorExpression,
-                'circle-opacity': 0.8,
-            },
-        });
+        if (layerConfig.type === 'circle') {
+            map?.addLayer({
+                id: layerId,
+                type: 'circle',
+                source: sourceId,
+                paint: {
+                    'circle-radius': 6,
+                    'circle-color': colorManager.buildExpression(),
+                    'circle-opacity': 0.8,
+                },
+            });
+        } else if (layerConfig.type === 'symbol') {
+            await registerCategoryIcons(sourceId, layerConfig);
 
-        addClickHandler();
+            map?.addLayer({
+                id: layerId,
+                type: 'symbol',
+                source: sourceId,
+                layout: {
+                    'icon-image': colorManager.buildIconExpression(sourceId),
+                    'icon-size': 6,
+                    'icon-allow-overlap': true,
+                    'icon-rotate': layerConfig.rotateProperty
+                        ? ['get', layerConfig.rotateProperty]
+                        : 0,
+                    'icon-rotation-alignment': 'map',
+                },
+            });
+        }
+
+        addClickHandler(layerId);
     }
 };
 
@@ -90,8 +119,8 @@ const createPopupContent = (properties: Record<string, unknown>) => {
     return container;
 };
 
-const addClickHandler = () => {
-    map?.on('click', 'features-circles', (e) => {
+const addClickHandler = (layerId: string) => {
+    map?.on('click', layerId, (e) => {
         const feature = e.features?.[0];
         if (!feature) return;
 
@@ -101,14 +130,11 @@ const addClickHandler = () => {
             Math.round(coordinates[1] * 1e6) / 1e6,
         ];
 
-        const properties = feature.properties;
-
         popupLngLat = rounded;
-
         popup?.remove();
         popup = new maplibregl.Popup()
             .setLngLat(rounded)
-            .setDOMContent(createPopupContent(properties))
+            .setDOMContent(createPopupContent(feature.properties))
             .addTo(map!);
 
         popup.on('close', () => {
@@ -130,10 +156,10 @@ const addClickHandler = () => {
         el.style.pointerEvents = visible ? 'auto' : 'none';
     });
 
-    map?.on('mouseover', 'features-circles', () => {
+    map?.on('mouseover', layerId, () => {
         if (map) map.getCanvas().style.cursor = 'pointer';
     });
-    map?.on('mouseleave', 'features-circles', () => {
+    map?.on('mouseleave', layerId, () => {
         if (map) map.getCanvas().style.cursor = '';
     });
 };
@@ -154,6 +180,25 @@ const isPointVisible = (coordinates: [number, number]): boolean => {
         Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
 
     return dotprod > 0;
+};
+
+const registerCategoryIcons = async (
+    sourceId: string,
+    layerConfig: Extract<import('@/sources/registry').LayerConfig, { type: 'symbol' }>,
+) => {
+    for (const [categoryId, color] of colorManager.getAssignments()) {
+        const key = `${sourceId}-${categoryId}`;
+        if (map?.hasImage(key)) continue;
+
+        const imageData = await createIconImage(
+            layerConfig.svgPath,
+            layerConfig.svgViewBox,
+            color,
+            6,
+        );
+
+        map?.addImage(key, imageData);
+    }
 };
 </script>
 

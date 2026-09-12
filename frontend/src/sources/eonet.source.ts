@@ -1,15 +1,15 @@
-import { useEonetStore } from "@/stores/eonet.store";
-import type { SourceDefinition } from "./registry.ts";
-import type { NormalizedFeature } from "@/types/normalized.type";
-import type { EonetFeature } from "@/types/eonet.type";
-import EonetControls from "./controls/EonetControls.vue";
+import { useEonetStore } from '@/stores/eonet.store';
+import type { SourceDefinition } from './registry.ts';
+import type { NormalizedFeature } from '@/types/normalized.type';
+import type { EonetFeature } from '@/types/eonet.type';
+import EonetControls from './controls/EonetControls.vue';
 
 export const eonetSource: SourceDefinition = {
     id: 'eonet',
     label: 'EONET',
     useStore: useEonetStore,
     normalize: (f: unknown): NormalizedFeature => {
-        const feature = f as EonetFeature
+        const feature = f as EonetFeature;
         return {
             ...feature,
             properties: {
@@ -26,7 +26,7 @@ export const eonetSource: SourceDefinition = {
                     closed: feature.properties.closed,
                 },
             },
-        }
+        };
     },
     controls: EonetControls,
 };

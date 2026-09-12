@@ -61,6 +61,19 @@ class CategoryColorManager {
         return matches as maplibregl.ExpressionSpecification;
     }
 
+    public buildIconExpression(prefix: string): maplibregl.ExpressionSpecification {
+        const matches: unknown[] = ['match', ['get', 'category']];
+
+        this.assignments.forEach((_, categoryId) => {
+            matches.push(categoryId);
+            matches.push(`${prefix}-${categoryId}`);
+        });
+
+        matches.push(`${prefix}-fallback`);
+
+        return matches as maplibregl.ExpressionSpecification;
+    }
+
     public getColor(categoryId: string): string {
         return this.assignments.get(categoryId) ?? '#ffffff';
     }

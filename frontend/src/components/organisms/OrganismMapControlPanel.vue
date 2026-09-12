@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import AtomButton from '../atoms/AtomButton.vue';
 import AtomAccordion from '../atoms/AtomAccordion.vue';
 import AtomCheckbox from '../atoms/AtomCheckbox.vue';
 import { colorManager } from '@/managers/categoryColor.manager.ts';
-import { sourceRegistry } from '@/sources/index.ts';
 import type { SourceStore } from '@/sources/registry';
+import { usePresetsStore } from '@/stores/presets.store.ts';
+import { presets } from '@/presets/index.ts';
+import { sourceRegistry } from '@/sources/index.ts';
 
 const isOpen = ref(true);
+const presetsStore = usePresetsStore();
 
-const sources = sourceRegistry.map((source) => ({
-    source,
-    store: source.useStore(),
-}));
+const sources = computed(() => {
+    const activePreset = presets.find((p) => p.id === presetsStore.activePreset);
+    if (!activePreset) return [];
+
+    return sourceRegistry
+        .filter((source) => activePreset.sources.includes(source.id))
+        .map((source) => ({
+            source,
+            store: source.useStore(),
+        }));
+});
 
 const toggleCategory = (store: SourceStore, id: string, title: string, checked: boolean) => {
     const next = new Map(store.selectedCategories);
@@ -21,7 +31,9 @@ const toggleCategory = (store: SourceStore, id: string, title: string, checked: 
 };
 
 const toggleAll = (store: SourceStore, checked: boolean) => {
-    store.selectedCategories = checked ? new Map(store.availableCategories) : new Map<string, string>();
+    store.selectedCategories = checked
+        ? new Map(store.availableCategories)
+        : new Map<string, string>();
 };
 </script>
 
@@ -79,14 +91,13 @@ const toggleAll = (store: SourceStore, checked: boolean) => {
                         cursor="cursor-pointer"
                         :loading="store.isLoading"
                         :checkbox="true"
-                        :checkboxValue="store.selectedCategories.size === store.availableCategories.size"
+                        :checkboxValue="
+                            store.selectedCategories.size === store.availableCategories.size
+                        "
                         @update:checkboxValue="(checked) => toggleAll(store, checked)"
                     >
                         <div class="flex flex-col gap-2">
-                            <component
-                                v-if="source.controls"
-                                :is="source.controls"
-                            />
+                            <component v-if="source.controls" :is="source.controls" />
                             <div class="flex flex-col gap-2 pt-1">
                                 <AtomCheckbox
                                     v-for="[id, title] in store.availableCategories"
@@ -94,7 +105,9 @@ const toggleAll = (store: SourceStore, checked: boolean) => {
                                     cursor="cursor-pointer"
                                     :modelValue="store.selectedCategories.has(id)"
                                     :color="colorManager.getColor(id)"
-                                    @update:modelValue="(checked) => toggleCategory(store, id, title, checked)"
+                                    @update:modelValue="
+                                        (checked) => toggleCategory(store, id, title, checked)
+                                    "
                                 >
                                     {{ title }}
                                 </AtomCheckbox>

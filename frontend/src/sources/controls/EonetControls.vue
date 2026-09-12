@@ -6,7 +6,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    'update:activeOnly': [value: boolean]
+    'update:activeOnly': [value: boolean];
 }>();
 </script>
 

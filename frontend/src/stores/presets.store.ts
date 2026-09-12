@@ -1,15 +1,9 @@
+import { presets } from '@/presets';
+import { sourceRegistry } from '@/sources';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { useEonetStore } from './eonet.store';
-import { useUsgsStore } from './usgs.store';
-import { presets } from '@/presets';
-import { useOpenskyStore } from './opensky.store';
 
 export const usePresetsStore = defineStore('presets', () => {
-    const eonetStore = useEonetStore();
-    const usgsStore = useUsgsStore();
-    const openskyStore = useOpenskyStore();
-
     const activePreset = ref<string | null>(null);
 
     const applyPreset = async (id: string) => {
@@ -18,24 +12,20 @@ export const usePresetsStore = defineStore('presets', () => {
 
         activePreset.value = id;
 
-        const fetchPromises = [];
-        if (preset.sources.includes('eonet')) fetchPromises.push(eonetStore.fetch());
-        if (preset.sources.includes('usgs')) fetchPromises.push(usgsStore.fetch());
-        if (preset.sources.includes('opensky')) fetchPromises.push(openskyStore.fetch());
+        for (const { useStore } of sourceRegistry) {
+            const store = useStore();
+            store.selectedCategories = new Map();
+        }
 
-        await Promise.all(fetchPromises);
+        const relevantSources = sourceRegistry.filter((s) => preset.sources.includes(s.id));
+        await Promise.all(relevantSources.map((s) => s.useStore().fetch()));
 
-        eonetStore.selectedCategories = preset.sources.includes('eonet')
-            ? new Map(eonetStore.availableCategories)
-            : new Map();
+        if (activePreset.value !== id) return;
 
-        usgsStore.selectedCategories = preset.sources.includes('usgs')
-            ? new Map(usgsStore.availableCategories)
-            : new Map();
-
-        openskyStore.selectedCategories = preset.sources.includes('opensky')
-            ? new Map(openskyStore.availableCategories)
-            : new Map();
+        for (const { id, useStore } of relevantSources) {
+            const store = useStore();
+            store.selectedCategories = new Map(store.availableCategories);
+        }
     };
 
     return { presets, activePreset, applyPreset };
