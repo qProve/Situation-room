@@ -61,15 +61,21 @@ class CategoryColorManager {
         return matches as maplibregl.ExpressionSpecification;
     }
 
-    public buildIconExpression(prefix: string): maplibregl.ExpressionSpecification {
+    public buildIconExpression(
+        prefix: string,
+        categoryIds: string[],
+    ): maplibregl.ExpressionSpecification {
+        if (categoryIds.length == 0)
+            return ['literal', ''] as unknown as maplibregl.ExpressionSpecification;
+
         const matches: unknown[] = ['match', ['get', 'category']];
 
-        this.assignments.forEach((_, categoryId) => {
+        for (const categoryId of categoryIds) {
             matches.push(categoryId);
             matches.push(`${prefix}-${categoryId}`);
-        });
+        }
 
-        matches.push(`${prefix}-fallback`);
+        matches.push('');
 
         return matches as maplibregl.ExpressionSpecification;
     }

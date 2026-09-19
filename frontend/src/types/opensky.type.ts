@@ -3,26 +3,26 @@ export interface OpenskyResponse {
     states: OpenskyState[];
 }
 
-export interface OpenskyState {
-    icao24: string;
-    callsign: string | null;
-    origin_country: string;
-    time_position: number | null;
-    last_contact: number;
-    longtitude: number | null;
-    latitude: number | null;
-    baro_altitude: number | null;
-    on_ground: boolean | null;
-    velocity: number | null;
-    true_track: number | null;
-    vertical_rate: number | null;
-    sensors: number[] | null;
-    geo_altitude: number | null;
-    squawk: string | null;
-    spi: boolean;
-    position_source: number;
-    category: number;
-}
+export type OpenskyState = [
+    string, // 0  icao24
+    string | null, // 1  callsign
+    string, // 2  origin_country
+    number | null, // 3  time_position
+    number, // 4  last_contact
+    number | null, // 5  longitude
+    number | null, // 6  latitude
+    number | null, // 7  baro_altitude
+    boolean | null, // 8  on_ground
+    number | null, // 9  velocity
+    number | null, // 10 true_track
+    number | null, // 11 vertical_rate
+    number[] | null, // 12 sensors
+    number | null, // 13 geo_altitude
+    string | null, // 14 squawk
+    boolean, // 15 spi
+    number, // 16 position_source
+    number, // 17 category
+];
 
 export const OpenskyStateCategoryMap: Record<number, string> = {
     0: 'No information',

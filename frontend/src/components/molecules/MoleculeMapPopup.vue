@@ -7,6 +7,7 @@ const props = defineProps<{
 }>();
 
 const categoryFormatted =
+    props.properties.categoryLabel ??
     props.properties.category[0]?.toUpperCase() + props.properties.category.slice(1);
 
 const extra = computed(() => {
@@ -48,6 +49,7 @@ const extra = computed(() => {
         </div>
 
         <a
+            v-if="properties.link"
             :href="properties.link"
             target="_blank"
             class="mt-2 block text-xs text-blue-400 hover:text-blue-300 underline text-right transition-colors"

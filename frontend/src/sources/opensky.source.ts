@@ -3,6 +3,7 @@ import type { SourceDefinition } from './registry';
 import type { NormalizedFeature } from '@/types/normalized.type';
 import type { OpenskyState } from '@/types/opensky.type';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
+import { OpenskyStateCategoryMap } from '@/types/opensky.type';
 
 export const openskySource: SourceDefinition = {
     id: 'opensky',
@@ -16,24 +17,29 @@ export const openskySource: SourceDefinition = {
     },
     normalize: (f: unknown): NormalizedFeature => {
         const state = f as OpenskyState;
+
+        const rawCategory = state[17] ?? 0;
+        const normalizedCategory = rawCategory === 1 ? 0 : rawCategory;
+
         return {
             type: 'Feature',
             geometry: {
                 type: 'Point',
-                coordinates: [state.longtitude ?? 0, state.latitude ?? 0],
+                coordinates: [state[5] ?? 0, state[6] ?? 0],
             },
             properties: {
-                id: state.icao24,
-                title: state.callsign?.trim() || state.icao24,
-                category: String(state.category),
-                date: new Date(state.last_contact * 1000).toISOString(),
-                description: state.origin_country,
-                heading: state.true_track,
+                id: state[0],
+                title: state[1]?.trim() || state[0],
+                category: String(normalizedCategory),
+                categoryLabel: OpenskyStateCategoryMap[normalizedCategory] ?? 'No information',
+                date: new Date(state[4] * 1000).toISOString(),
+                description: 'Originated from ' + state[2],
+                heading: state[10],
                 extra: {
-                    altitude: state.baro_altitude,
-                    velocity: state.velocity,
-                    on_ground: state.on_ground,
-                    squawk: state.squawk,
+                    altitude: state[7],
+                    velocity: state[9],
+                    on_ground: state[8],
+                    squawk: state[14],
                 },
             },
         };

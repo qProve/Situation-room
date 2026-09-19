@@ -1,6 +1,6 @@
 import { colorManager } from '@/managers/categoryColor.manager';
 import { fetchOpenskyEvents } from '@/services/events.service';
-import { OpenskyStateCategoryMap, type OpenskyState } from '@/types/opensky.type';
+import { type OpenskyState, OpenskyStateCategoryMap } from '@/types/opensky.type';
 import { defineStore } from 'pinia';
 import { ref, computed, watch } from 'vue';
 
@@ -16,31 +16,20 @@ export const useOpenskyStore = defineStore('opensky', () => {
         const seen = new Map<string, string>();
 
         for (const feature of features.value) {
-            const categoryId = feature.category;
-            const id = new String(categoryId).toString();
-            let formatedTitle = '';
-
-            if (categoryId === 1) {
-                formatedTitle = OpenskyStateCategoryMap[0] ?? '';
-            } else if (categoryId === 16 || categoryId === 17) {
-                continue;
-            }
-
-            formatedTitle = OpenskyStateCategoryMap[categoryId] ?? '';
-            if (id) seen.set(id, formatedTitle);
+            const categoryId = feature[17] ?? 0;
+            const formattedTitle = OpenskyStateCategoryMap[categoryId] ?? 'Unknown';
+            seen.set(String(categoryId), formattedTitle);
         }
 
         return seen;
     });
 
     const filteredFeatures = computed(() => {
-        let result = features.value;
-
-        result = result.filter((f) =>
-            selectedCategories.value.has(new String(f.category).toString() ?? ''),
-        );
-
-        return result;
+        return features.value.filter((f) => {
+            if (f[8] === true) return false;
+            if (f[5] === null || f[6] === null) return false;
+            return selectedCategories.value.has(String(f[17] ?? 0));
+        });
     });
 
     watch(
@@ -62,7 +51,8 @@ export const useOpenskyStore = defineStore('opensky', () => {
         try {
             features.value = await fetchOpenskyEvents();
 
-            const cats = [...new Set(features.value.map((f) => new String(f.category).toString()))];
+            const cats = [...new Set(features.value.map((f) => String(f[17] ?? 0)))];
+
             cats.forEach((cat) => colorManager.rent(cat));
             fetched.value = true;
         } catch (e) {

@@ -27,6 +27,10 @@ const mapReady = ref(false);
 let popup: maplibregl.Popup | null = null;
 let popupLngLat: [number, number] | null = null;
 
+const registeredCategories = new Map<string, string[]>();
+const registeredIcons = new Set<string>();
+const addingLayers = new Set<string>();
+
 onMounted(() => {
     if (mapContainer.value) {
         map = new maplibregl.Map({
@@ -64,14 +68,53 @@ const updateSource = async (sourceDef: SourceDefinition, features: Feature[]) =>
     const layerConfig = sourceDef.layerConfig ?? { type: 'circle' };
 
     const existingSource = map?.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+    const existingLayer = map?.getLayer(layerId);
 
     if (existingSource) {
         existingSource.setData({ type: 'FeatureCollection', features });
 
         if (layerConfig.type === 'circle') {
-            map?.setPaintProperty(layerId, 'circle-color', colorManager.buildExpression());
+            if (existingLayer) {
+                map?.setPaintProperty(layerId, 'circle-color', colorManager.buildExpression());
+            }
+        } else if (layerConfig.type === 'symbol' && features.length > 0) {
+            await registerCategoryIcons(sourceId, features, layerConfig);
+
+            if (existingLayer) {
+                map?.setLayoutProperty(
+                    layerId,
+                    'icon-image',
+                    colorManager.buildIconExpression(
+                        sourceId,
+                        registeredCategories.get(sourceId) ?? [],
+                    ),
+                );
+            } else if (!addingLayers.has(layerId)) {
+                addingLayers.add(layerId);
+                map?.addLayer({
+                    id: layerId,
+                    type: 'symbol',
+                    source: sourceId,
+                    layout: {
+                        'icon-image': colorManager.buildIconExpression(
+                            sourceId,
+                            registeredCategories.get(sourceId) ?? [],
+                        ),
+                        'icon-size': 0.15,
+                        'icon-allow-overlap': true,
+                        'icon-rotate': layerConfig.rotateProperty
+                            ? ['get', layerConfig.rotateProperty]
+                            : 0,
+                        'icon-rotation-alignment': 'map',
+                    },
+                });
+
+                addClickHandler(layerId);
+            }
         }
     } else {
+        if (features.length === 0) return;
+
         map?.addSource(sourceId, {
             type: 'geojson',
             data: { type: 'FeatureCollection', features },
@@ -88,16 +131,22 @@ const updateSource = async (sourceDef: SourceDefinition, features: Feature[]) =>
                     'circle-opacity': 0.8,
                 },
             });
-        } else if (layerConfig.type === 'symbol') {
-            await registerCategoryIcons(sourceId, layerConfig);
+
+            addClickHandler(layerId);
+        } else if (layerConfig.type === 'symbol' && !addingLayers.has(layerId)) {
+            addingLayers.add(layerId);
+            await registerCategoryIcons(sourceId, features, layerConfig);
 
             map?.addLayer({
                 id: layerId,
                 type: 'symbol',
                 source: sourceId,
                 layout: {
-                    'icon-image': colorManager.buildIconExpression(sourceId),
-                    'icon-size': 6,
+                    'icon-image': colorManager.buildIconExpression(
+                        sourceId,
+                        registeredCategories.get(sourceId) ?? [],
+                    ),
+                    'icon-size': 0.15,
                     'icon-allow-overlap': true,
                     'icon-rotate': layerConfig.rotateProperty
                         ? ['get', layerConfig.rotateProperty]
@@ -105,9 +154,9 @@ const updateSource = async (sourceDef: SourceDefinition, features: Feature[]) =>
                     'icon-rotation-alignment': 'map',
                 },
             });
-        }
 
-        addClickHandler(layerId);
+            addClickHandler(layerId);
+        }
     }
 };
 
@@ -184,20 +233,31 @@ const isPointVisible = (coordinates: [number, number]): boolean => {
 
 const registerCategoryIcons = async (
     sourceId: string,
+    features: Feature[],
     layerConfig: Extract<import('@/sources/registry').LayerConfig, { type: 'symbol' }>,
 ) => {
-    for (const [categoryId, color] of colorManager.getAssignments()) {
-        const key = `${sourceId}-${categoryId}`;
-        if (map?.hasImage(key)) continue;
+    const categories = [...new Set(features.map((f) => f.properties?.category as string))].filter(
+        (c) => c && c !== 'undefined',
+    );
 
+    registeredCategories.set(sourceId, categories);
+
+    for (const categoryId of categories) {
+        const key = `${sourceId}-${categoryId}`;
+        if (map?.hasImage(key) || registeredIcons.has(key)) continue;
+        registeredIcons.add(key);
+
+        const color = colorManager.getColor(categoryId);
         const imageData = await createIconImage(
             layerConfig.svgPath,
             layerConfig.svgViewBox,
             color,
-            6,
+            128,
         );
 
-        map?.addImage(key, imageData);
+        try {
+            map?.addImage(key, imageData);
+        } catch {}
     }
 };
 </script>
