@@ -28,7 +28,6 @@ export const fetchOpenskyEvents = async (): Promise<OpenskyState[]> => {
     console.log('Opensky fetching...');
 
     const { data } = await http.get<OpenskyResponse>(ENDPOINTS.events.opensky);
-    console.log('state length', data.states[0]?.length, 'full state', data.states[0]);
 
     console.log('Opensky fetched');
 
