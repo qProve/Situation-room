@@ -1,11 +1,11 @@
-import { colorManager } from '@/managers/categoryColor.manager';
-import { fetchOpenskyEvents } from '@/services/events.service';
-import { type OpenskyState, OpenskyStateCategoryMap } from '@/types/opensky.type';
-import { defineStore } from 'pinia';
-import { ref, computed, watch } from 'vue';
+import { colorManager } from "@/managers/categoryColor.manager";
+import { fetchTrainstrackingEvents } from "@/services/events.service";
+import type { TrainstrackingTrain } from "@/types/trainstracking.type";
+import { defineStore } from "pinia";
+import { computed, ref, watch } from "vue";
 
-export const useOpenskyStore = defineStore('opensky', () => {
-    const features = ref<OpenskyState[]>([]);
+export const useTrainstrackingStore = defineStore('trainstracking', () => {
+    const features = ref<TrainstrackingTrain[]>([]);
     const isLoading = ref(false);
     const error = ref<string | null>(null);
     const fetched = ref(false);
@@ -16,20 +16,20 @@ export const useOpenskyStore = defineStore('opensky', () => {
         const seen = new Map<string, string>();
 
         for (const feature of features.value) {
-            const categoryId = feature[17] ?? 0;
-            const formattedTitle = OpenskyStateCategoryMap[categoryId] ?? 'Unknown';
-            if (categoryId) seen.set(String(categoryId), formattedTitle);
+            const id = feature.status;
+            const formatedTitle = id[0]?.toUpperCase() + id.slice(1).toLocaleLowerCase();
+            if (id) seen.set(id, formatedTitle);
         }
 
         return seen;
     });
 
     const filteredFeatures = computed(() => {
-        return features.value.filter((f) => {
-            if (f[8] === true) return false;
-            if (f[5] === null || f[6] === null) return false;
-            return selectedCategories.value.has(String(f[17] ?? 0));
-        });
+        let result = features.value;
+
+        result = result.filter((f) => selectedCategories.value.has(f.status) ?? '');
+
+        return result;
     });
 
     watch(
@@ -42,16 +42,16 @@ export const useOpenskyStore = defineStore('opensky', () => {
         { immediate: true, flush: 'sync' },
     );
 
-    const fetchOpenskyEvents_ = async () => {
+    const fetchTrainstrackingEvents_ = async () => {
         if (fetched.value) return;
 
         isLoading.value = true;
         error.value = null;
 
         try {
-            features.value = await fetchOpenskyEvents();
+            features.value = await fetchTrainstrackingEvents();
 
-            const cats = [...new Set(features.value.map((f) => String(f[17] ?? 0)))];
+            const cats = [...new Set(features.value.map((f) => f.status))];
 
             cats.forEach((cat) => colorManager.rent(cat));
             fetched.value = true;
@@ -67,7 +67,7 @@ export const useOpenskyStore = defineStore('opensky', () => {
         isLoading,
         error,
         fetched,
-        fetch: fetchOpenskyEvents_,
+        fetch: fetchTrainstrackingEvents_,
         selectedCategories,
         availableCategories,
         filteredFeatures,

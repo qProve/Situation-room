@@ -3,6 +3,7 @@ import http from './http';
 import { ENDPOINTS } from './endpoints';
 import type { UsgsFeature, UsgsFeatureCollection } from '@/types/usgs.type';
 import type { OpenskyResponse, OpenskyState } from '@/types/opensky.type';
+import type { TrainstrackingTrain } from '@/types/trainstracking.type';
 
 export const fetchEonetEvents = async (): Promise<EonetFeature[]> => {
     console.log('Eonet fetching...');
@@ -33,3 +34,13 @@ export const fetchOpenskyEvents = async (): Promise<OpenskyState[]> => {
 
     return data.states;
 };
+
+export const fetchTrainstrackingEvents = async (): Promise<TrainstrackingTrain[]> => {
+    console.log('Trainstracking fetching...');
+
+    const { data } = await http.get(ENDPOINTS.events.traintracking);
+
+    console.log('Trainstracking fetched');
+
+    return data.trains;
+}

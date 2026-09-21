@@ -3,5 +3,6 @@ export const ENDPOINTS = {
         eonet: '/events/eonet',
         usgs: '/events/usgs',
         opensky: '/events/opensky',
+        traintracking: '/events/trainstracking',
     },
 } as const;

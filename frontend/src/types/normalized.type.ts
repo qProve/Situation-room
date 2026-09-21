@@ -5,7 +5,7 @@ export interface NormalizedProperties {
     title: string;
     category: string;
     categoryLabel?: string;
-    date: string;
+    date?: string;
     link?: string;
     description?: string | null;
     heading?: number | null;
