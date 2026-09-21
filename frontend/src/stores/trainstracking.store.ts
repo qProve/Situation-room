@@ -1,8 +1,8 @@
-import { colorManager } from "@/managers/categoryColor.manager";
-import { fetchTrainstrackingEvents } from "@/services/events.service";
-import type { TrainstrackingTrain } from "@/types/trainstracking.type";
-import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { colorManager } from '@/managers/categoryColor.manager';
+import { fetchTrainstrackingEvents } from '@/services/events.service';
+import type { TrainstrackingTrain } from '@/types/trainstracking.type';
+import { defineStore } from 'pinia';
+import { computed, ref, watch } from 'vue';
 
 export const useTrainstrackingStore = defineStore('trainstracking', () => {
     const features = ref<TrainstrackingTrain[]>([]);

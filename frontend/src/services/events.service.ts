@@ -43,4 +43,4 @@ export const fetchTrainstrackingEvents = async (): Promise<TrainstrackingTrain[]
     console.log('Trainstracking fetched');
 
     return data.trains;
-}
+};

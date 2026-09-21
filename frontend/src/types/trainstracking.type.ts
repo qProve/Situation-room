@@ -3,7 +3,7 @@ export interface TrainstrackingResponse {
     liveCountries: string[];
     stats: TrainstrackingStats;
     fetchedAt: string;
-};
+}
 
 export interface TrainstrackingTrain {
     id: string;
@@ -28,4 +28,4 @@ export interface TrainstrackingStats {
     running: number;
     withGPS: number;
     delayed: number;
-};
+}

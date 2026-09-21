@@ -2,7 +2,12 @@ import { Router, Request, Response } from 'express';
 import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 
-import { NASA_EONET_EVENTS_URL, OPENSKY_URL, TRAINSTRACKING_URL, USGS_EARTHQUAKE_URL } from '../constants/urls';
+import {
+    NASA_EONET_EVENTS_URL,
+    OPENSKY_URL,
+    TRAINSTRACKING_URL,
+    USGS_EARTHQUAKE_URL,
+} from '../constants/urls';
 
 const router = Router();
 
