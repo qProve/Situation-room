@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 
-import { NASA_EONET_EVENTS_URL, OPENSKY_URL, USGS_EARTHQUAKE_URL } from '../constants/urls';
+import { NASA_EONET_EVENTS_URL, OPENSKY_URL, TRAINSTRACKING_URL, USGS_EARTHQUAKE_URL } from '../constants/urls';
 
 const router = Router();
 
@@ -59,6 +59,22 @@ router.get('/opensky', async (_req: Request, res: Response) => {
             res.status(status).json({ error: message });
         } else {
             console.log('Error while downloading data (OpenSky): ', e);
+        }
+    }
+});
+
+router.get('/trainstracking', async (_req: Request, res: Response) => {
+    try {
+        const response = await axios.get(TRAINSTRACKING_URL);
+        res.json(response.data);
+    } catch (e: unknown) {
+        if (e instanceof AxiosError) {
+            const status = e.response?.status || 500;
+            const message = e.response?.data.message || 'Unknown error from TrainsTracking servers';
+
+            res.status(status).json({ error: message });
+        } else {
+            console.log('Error while downloading data (TrainsTracking): ', e);
         }
     }
 });

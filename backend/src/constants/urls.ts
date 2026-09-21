@@ -7,3 +7,6 @@ export const USGS_EARTHQUAKE_URL =
 
 // OpenSky
 export const OPENSKY_URL = 'https://opensky-network.org/api/states/all';
+
+// TrainsTracking
+export const TRAINSTRACKING_URL = 'https://trainstracking.com/api/live/realtime';
