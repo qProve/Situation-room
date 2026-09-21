@@ -27,13 +27,13 @@ export const trainstrackingSource: SourceDefinition = {
             type: 'Feature',
             geometry: {
                 type: 'Point',
-                coordinates: [train.lat ?? 0, train.lng ?? 0],
+                coordinates: [train.lng ?? 0, train.lat ?? 0],
             },
             properties: {
                 id: train.id,
                 title: train.name,
                 category: train.status,
-                categoryLabel: train.status,
+                categoryLabel: train.status[0]?.toUpperCase() + train.status.slice(1),
                 description: normalizedDescription,
                 extra: {
                     delay: train.delay,

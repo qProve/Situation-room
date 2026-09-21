@@ -36,7 +36,7 @@ const extra = computed(() => {
                 <span class="text-white">Category</span>
                 <span class="text-white">{{ categoryFormatted }}</span>
             </div>
-            <div class="flex justify-between gap-4 text-xs">
+            <div v-if="properties.date" class="flex justify-between gap-4 text-xs">
                 <span class="text-white">Date</span>
                 <span class="text-white">{{ properties.date }}</span>
             </div>
