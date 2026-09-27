@@ -1,6 +1,6 @@
 {
     "name": "situation-room",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Web application for displaying real time data on an interactive map.",
     "main": "index.js",
     "scripts": {
