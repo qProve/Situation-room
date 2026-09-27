@@ -42,7 +42,7 @@ const extra = computed(() => {
             </div>
             <template v-for="(value, key) in extra">
                 <div v-if="value" class="flex justify-between gap-4 text-xs">
-                    <span class="text-white capitalize">{{ key }}</span>
+                    <span class="text-white capitalize">{{ key.replace('_', ' ') }}</span>
                     <span class="text-white">{{ value }}</span>
                 </div>
             </template>

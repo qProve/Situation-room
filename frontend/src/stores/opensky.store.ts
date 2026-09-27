@@ -18,7 +18,7 @@ export const useOpenskyStore = defineStore('opensky', () => {
         for (const feature of features.value) {
             const categoryId = feature[17] ?? 0;
             const formattedTitle = OpenskyStateCategoryMap[categoryId] ?? 'Unknown';
-            if (categoryId) seen.set(String(categoryId), formattedTitle);
+            if (formattedTitle) seen.set(String(categoryId), formattedTitle);
         }
 
         return seen;

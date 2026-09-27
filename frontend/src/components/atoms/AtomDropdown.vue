@@ -10,6 +10,7 @@ const props = withDefaults(
         iconPosition?: 'before' | 'after';
         cursor?: 'cursor-pointer' | 'cursor-default';
         align?: 'left' | 'right' | 'center';
+        withArrow?: boolean;
     }>(),
     {
         icon: null,
@@ -17,6 +18,7 @@ const props = withDefaults(
         iconPosition: 'before',
         cursor: 'cursor-pointer',
         align: 'left',
+        withArrow: true,
     },
 );
 
@@ -60,6 +62,7 @@ const toggle = () => {
             </template>
             <span v-else class="text-white/30">Select preset</span>
             <i
+                v-if="withArrow"
                 class="fa-solid fa-chevron-down text-xs text-white/40 transition-transform duration-200"
                 :class="{ 'rotate-180': isOpen }"
             />

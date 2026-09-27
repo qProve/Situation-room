@@ -80,6 +80,8 @@ const updateSource = async (sourceDef: SourceDefinition, features: Feature[]) =>
         } else if (layerConfig.type === 'symbol' && features.length > 0) {
             await registerCategoryIcons(sourceId, features, layerConfig);
 
+            console.log(sourceId);
+
             if (existingLayer) {
                 map?.setLayoutProperty(
                     layerId,

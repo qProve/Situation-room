@@ -21,7 +21,10 @@ export const trainstrackingSource: SourceDefinition = {
             ' ',
         );
 
-        const normalizedDescription = `${train.trainCode}-${country}: ${train.from} -> ${train.to} | next: ${train.nextStation}`;
+        let normalizedDescription = `${train.trainCode}-${country}: ${train.from} -> ${train.to}`;
+        if (train.nextStation != null) {
+            normalizedDescription += ` | next: ${train.nextStation}`;
+        }
 
         return {
             type: 'Feature',
