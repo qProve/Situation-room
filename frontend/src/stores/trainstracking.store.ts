@@ -32,16 +32,6 @@ export const useTrainstrackingStore = defineStore('trainstracking', () => {
         return result;
     });
 
-    watch(
-        availableCategories,
-        (cats, prevCats) => {
-            if (prevCats?.size === 0 && cats.size > 0) {
-                selectedCategories.value = new Map(cats);
-            }
-        },
-        { immediate: true, flush: 'sync' },
-    );
-
     const fetchTrainstrackingEvents_ = async () => {
         if (fetched.value) return;
 

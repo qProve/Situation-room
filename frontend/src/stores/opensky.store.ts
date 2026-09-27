@@ -32,16 +32,6 @@ export const useOpenskyStore = defineStore('opensky', () => {
         });
     });
 
-    watch(
-        availableCategories,
-        (cats, prevCats) => {
-            if (prevCats?.size === 0 && cats.size > 0) {
-                selectedCategories.value = new Map(cats);
-            }
-        },
-        { immediate: true, flush: 'sync' },
-    );
-
     const fetchOpenskyEvents_ = async () => {
         if (fetched.value) return;
 

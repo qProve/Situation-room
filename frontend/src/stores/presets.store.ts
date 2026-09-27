@@ -18,14 +18,15 @@ export const usePresetsStore = defineStore('presets', () => {
         }
 
         const relevantSources = sourceRegistry.filter((s) => preset.sources.includes(s.id));
-        await Promise.all(relevantSources.map((s) => s.useStore().fetch()));
+        await Promise.all(
+            relevantSources.map(async (s) => {
+                const store = s.useStore();
+                await store.fetch();
 
-        if (activePreset.value !== id) return;
-
-        for (const { id, useStore } of relevantSources) {
-            const store = useStore();
-            store.selectedCategories = new Map(store.availableCategories);
-        }
+                if (activePreset.value !== id) return;
+                store.selectedCategories = new Map(store.availableCategories);
+            }),
+        );
     };
 
     return { presets, activePreset, applyPreset };

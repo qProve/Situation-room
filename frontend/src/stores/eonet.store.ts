@@ -40,16 +40,6 @@ export const useEonetStore = defineStore('eonet', () => {
         return result;
     });
 
-    watch(
-        availableCategories,
-        (cats, prevCats) => {
-            if (prevCats?.size === 0 && cats.size > 0) {
-                selectedCategories.value = new Map(cats);
-            }
-        },
-        { immediate: true, flush: 'sync' },
-    );
-
     const fetchEonetEvents_ = async () => {
         if (fetched.value) return;
 

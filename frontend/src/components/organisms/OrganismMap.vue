@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import AtomMap from '../atoms/AtomMap.vue';
 import OrganismMapControlPanel from './OrganismMapControlPanel.vue';
-import type { NormalizedFeature } from '@/types/normalized.type.ts';
 import { sourceRegistry } from '@/sources/index.ts';
 
 const sources = sourceRegistry.map((source) => ({
